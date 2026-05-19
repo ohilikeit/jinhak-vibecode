@@ -4,7 +4,9 @@ const path = require('node:path');
 const os = require('node:os');
 
 function harnessHome() {
-  return process.env.HARNESS_HOME || path.join(os.homedir(), '.harness');
+  if (process.env.HARNESS_HOME) return process.env.HARNESS_HOME;
+  if (process.env.HARNESS_DEV === '1') return path.join(process.cwd(), 'dev-home');
+  return path.join(os.homedir(), '.harness');
 }
 
 function agentsSkillsHome() {
