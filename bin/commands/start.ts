@@ -10,6 +10,9 @@ import { createInterface, type Interface } from "node:readline";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { harnessHome } from "../paths.js";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { profileFrom, renderYaml } = require("../user-profiler.js");
 
 interface Question {
   key: string;
@@ -69,6 +72,9 @@ function writeProfile(target: string, answers: Record<string, string | string[]>
       lines.push(`${q.key}: ${yamlScalar(String(v))}`);
     }
   }
+  // 8 행동 차원 자동 추론 (REPORT_06 §3.2)
+  const behavior = profileFrom(answers);
+  lines.push(renderYaml(behavior));
   lines.push("---", "", "# 사용자 프로필", "");
   lines.push(`- **직군**: ${answers.role}`);
   lines.push(`- **반복 업무**: ${answers.repetitive_tasks}`);
@@ -76,6 +82,16 @@ function writeProfile(target: string, answers: Record<string, string | string[]>
   lines.push(`- **회사 톤**: ${answers.company_tone}`);
   const tools = Array.isArray(answers.tools) ? answers.tools.join(", ") : answers.tools;
   lines.push(`- **자주 쓰는 도구**: ${tools}`);
+  lines.push("");
+  lines.push("## 행동 차원 (자동 추론, 1~5)");
+  lines.push("");
+  lines.push(`- 상세도(verbosity): ${behavior.verbosity}`);
+  lines.push(`- 속도 vs 꼼꼼함(speed): ${behavior.speed}`);
+  lines.push(`- 실수 무관용(error_tolerance): ${behavior.error_tolerance}`);
+  lines.push(`- 협업 성향(collaboration_style): ${behavior.collaboration_style}`);
+  lines.push(`- 기록 선호(documentation_pref): ${behavior.documentation_pref}`);
+  lines.push(`- 도구 친숙도(tool_familiarity): ${behavior.tool_familiarity}`);
+  lines.push(`- 검증 강도(verification_rigor): ${behavior.verification_rigor}`);
   lines.push("");
   fs.writeFileSync(target, lines.join("\n"));
 }
