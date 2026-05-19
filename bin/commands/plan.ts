@@ -11,6 +11,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { loadSpecs, keywordsFor } = require("../user-skill-loader.js");
 
 interface SkillManifest {
   name: string;
@@ -94,6 +97,11 @@ function loadSkill(name: string): SkillManifest | null {
 
 function chooseSkill(request: string): string | null {
   const r = request || "";
+  // user-skill 우선 매칭 (사용자가 직접 만든 자동화)
+  for (const spec of loadSpecs()) {
+    const kws = keywordsFor(spec);
+    if (kws.some((k: string) => r.includes(k))) return spec.name;
+  }
   for (const rule of KEYWORD_RULES) {
     if (rule.keywords.some((k) => r.includes(k))) return rule.skill;
   }

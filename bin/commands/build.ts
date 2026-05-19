@@ -18,6 +18,7 @@ import { write as writeCsv } from "../../templates/common/utils/csv-write/script
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { formatError, HarnessError } = require("../friendly-error.js");
+const { loadSpecs, keywordsFor } = require("../user-skill-loader.js");
 
 interface Args {
   request: string;
@@ -247,8 +248,91 @@ const RULES: Rule[] = [
   },
 ];
 
+// user-skills/<name>/spec.json 을 RULES 형식으로 변환하는 일반화 runner
+function buildUserSkillRule(spec: any): Rule {
+  return {
+    skill: spec.name,
+    keywords: keywordsFor(spec),
+    describeIO: () => [
+      `  inbox=${spec.inbox_dir}`,
+      `  output=${spec.output_path}`,
+      `  필드=${(spec.fields || []).join(", ") || "(없음)"}`,
+    ],
+    run: async () => {
+      const cwd = process.cwd();
+      const inbox = path.isAbsolute(spec.inbox_dir) ? spec.inbox_dir : path.join(cwd, spec.inbox_dir);
+      const outPath = path.isAbsolute(spec.output_path) ? spec.output_path : path.join(cwd, spec.output_path);
+      const inExt = "." + String(spec.input_ext || "").replace(/^\./, "");
+
+      if (!fs.existsSync(inbox)) {
+        throw new HarnessError("inbox-not-found", "inbox missing", {
+          path: inbox,
+          skill: spec.name,
+        });
+      }
+      const files = fs
+        .readdirSync(inbox)
+        .filter((f) => f.toLowerCase().endsWith(inExt))
+        .map((f) => path.join(inbox, f))
+        .sort();
+      if (files.length === 0) {
+        throw new HarnessError("inbox-empty", "no files", {
+          path: inbox,
+          kind: spec.input_ext.toUpperCase(),
+          ext: inExt,
+        });
+      }
+
+      const rows: Record<string, string>[] = [];
+      for (const file of files) {
+        let text = "";
+        if (spec.input_ext === "pdf") {
+          const { pages } = await extract(file);
+          text = pages.map((p) => p.text).join("\n");
+        } else {
+          text = fs.readFileSync(file, "utf-8");
+        }
+        const row: Record<string, string> = {};
+        for (const field of spec.fields || []) {
+          row[field] = pickField(text, [field]) ?? "(미기재)";
+        }
+        rows.push(row);
+      }
+
+      fs.mkdirSync(path.dirname(outPath), { recursive: true });
+      if (spec.output_ext === "csv") {
+        const r = await writeCsv({ output: outPath, rows });
+        return { output: r.output, rows: r.rows };
+      }
+      if (spec.output_ext === "md") {
+        const headers = spec.fields || [];
+        const lines = [
+          `# ${spec.name}`,
+          "",
+          `정리 시각: ${new Date().toISOString()}`,
+          `총 ${rows.length}건`,
+          "",
+          "| " + headers.join(" | ") + " |",
+          "|" + headers.map(() => "---").join("|") + "|",
+          ...rows.map((r) => "| " + headers.map((h: string) => String(r[h] ?? "")).join(" | ") + " |"),
+          "",
+        ];
+        fs.writeFileSync(outPath, lines.join("\n"));
+        return { output: outPath, rows: rows.length };
+      }
+      // xlsx는 템플릿이 필요하므로 MVP 동적 runner에서는 미지원
+      throw new HarnessError("unknown", `user-skill 동적 runner는 ${spec.output_ext}을 아직 지원하지 않습니다. csv/md만 가능합니다.`);
+    },
+  };
+}
+
 function chooseRule(request: string): Rule | null {
   const r = request || "";
+  // user-skill을 먼저 검사 (더 구체적인 키워드일 가능성 높음)
+  for (const spec of loadSpecs()) {
+    const rule = buildUserSkillRule(spec);
+    if (rule.keywords.some((k) => r.includes(k))) return rule;
+  }
   for (const rule of RULES) {
     if (rule.keywords.some((k) => r.includes(k))) return rule;
   }

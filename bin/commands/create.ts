@@ -169,11 +169,33 @@ async function main(): Promise<number> {
   const skillMd = path.join(skillDir, "SKILL.md");
   fs.writeFileSync(skillMd, renderSkillMd(spec));
 
+  // spec.json도 같이 저장 — user-skill-loader가 build/plan에서 동적 로드
+  const specJson = path.join(skillDir, "spec.json");
+  fs.writeFileSync(
+    specJson,
+    JSON.stringify(
+      {
+        name: spec.name,
+        trigger_phrase: spec.trigger_phrase,
+        keywords: spec.trigger_phrase.split(/\s+/).filter((w) => w.length >= 2),
+        inbox_dir: spec.inbox_dir,
+        input_ext: spec.input_ext,
+        output_ext: spec.output_ext,
+        output_path: spec.output_path,
+        fields: spec.fields,
+        created: new Date().toISOString(),
+      },
+      null,
+      2,
+    ),
+  );
+
   // 요약 출력
   process.stdout.write(
     [
       "",
       `✅ 새 스킬 SKILL.md 생성: ${skillMd}`,
+      `✅ 동적 등록용 spec.json 생성: ${specJson}`,
       "",
       "📦 요약:",
       `  이름:        ${spec.name}`,
@@ -184,9 +206,8 @@ async function main(): Promise<number> {
       `  requires:    ${inferRequires(spec.input_ext, spec.output_ext).join(", ") || "(없음)"}`,
       "",
       "🛠 다음 단계:",
-      `  1. 생성된 SKILL.md를 검토·편집: ${skillMd}`,
-      `  2. /build 자동 실행을 원하면 \`bin/commands/build.ts\` RULES 배열에 항목 추가`,
-      "     (다음 phase에서 동적 등록 자동화 예정)",
+      `  - /plan "${spec.trigger_phrase}"  로 계획 확인`,
+      `  - /build "${spec.trigger_phrase}" 로 즉시 실행 (spec.json 자동 인식)`,
       "",
     ].join("\n"),
   );
