@@ -102,13 +102,9 @@ function format(results, fromCache) {
   return lines.join('\n');
 }
 
-function main() {
-  const args = process.argv.slice(2);
-  const forceRefresh = args.includes('--refresh') || args.includes('--no-cache');
-
+function detectAll(forceRefresh = false) {
   let results;
   let fromCache = false;
-
   if (!forceRefresh) {
     const cached = loadCache();
     if (cached) {
@@ -116,16 +112,22 @@ function main() {
       fromCache = true;
     }
   }
-
   if (!results) {
     results = runProbes();
     saveCache(results);
   }
+  return { results, fromCache, cacheFile: CACHE_FILE };
+}
 
+function main() {
+  const args = process.argv.slice(2);
+  const forceRefresh = args.includes('--refresh') || args.includes('--no-cache');
+  const { results, fromCache } = detectAll(forceRefresh);
   process.stdout.write(format(results, fromCache));
-
   const allFound = Object.values(results).every((r) => r.found);
   process.exit(allFound ? 0 : 1);
 }
 
-main();
+module.exports = { detectAll, hintFor, INSTALL_HINTS };
+
+if (require.main === module) main();
