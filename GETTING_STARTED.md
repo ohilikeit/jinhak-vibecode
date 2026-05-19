@@ -9,7 +9,7 @@
 
 ## 0. 이 도구가 뭐예요?
 
-반복되는 사무 업무(채용공고 PDF 모으기 → Excel 정리, 회의록 → 요약, 영수증 → CSV)를 **AI 코딩 도구의 채팅창**(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)에서 `/start`, `/build` 같은 **슬래시 커맨드** 한 줄로 돌아가게 만들어 주는 한국어 도구입니다.
+반복되는 사무 업무(채용공고 PDF 모으기 → Excel 정리, 회의록 → 요약, 영수증 → CSV)를 **AI 코딩 도구의 채팅창**(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)에서 `/jinhak-harness:start`, `/jinhak-harness:build` 같은 **슬래시 커맨드** 한 줄로 돌아가게 만들어 주는 한국어 도구입니다.
 
 - 5분짜리 인터뷰만 하면 내 직군에 맞게 설정됩니다
 - 결과물은 항상 한국어로 알려줍니다
@@ -269,22 +269,29 @@ A. 안 나갑니다. 기본 프로필(`eco`)은 외부 전송이 차단되어 �
 A. 기본 프로필은 LLM 호출이 0회입니다. PDF·Excel 처리만 합니다. 추가 비용 없음.
 
 **Q. 슬래시 커맨드가 자동완성에 안 떠요.**
-A. AI 도구를 한 번 완전히 종료 후 재실행하세요. 그래도 안 뜨면 `/doctor` 를 실행해 진단 리포트를 확인.
+A. (1) `jinhak-harness register` 를 돌렸는지 확인. (2) AI 도구를 한 번 **완전히 종료** 후 재실행. (3) 그래도 안 뜨면 `/jinhak-harness:doctor` 를 실행해 진단 리포트 확인.
 
 **Q. 실수로 결과가 이상하면 되돌릴 수 있나요?**
 A. `output/` 안의 파일은 다시 만들면 덮어쓰여집니다. 원본 PDF는 `inbox/` 에 그대로. `~/.harness/memory/decisions.jsonl` 에 모든 결정 기록이 남습니다.
 
 **Q. 회사 PC를 바꿔도 설정이 유지되나요?**
-A. `~/.harness/` 폴더만 복사해 가시면 됩니다. 또는 새 PC에서 `/start` 다시 한 번.
+A. `~/.harness/` 폴더만 복사해 가시면 됩니다. 또는 새 PC에서 `jinhak-harness register` → `/jinhak-harness:start` 다시 한 번.
 
 **Q. PDF 추출이 잘 안 돼요. 글자가 비어요.**
-A. PDF가 **이미지 스캔본**이면 글자가 안 잡힙니다. OCR이 된 텍스트형 PDF여야 합니다. `/verify` 가 어느 줄이 비었는지 한국어로 알려줍니다.
+A. PDF가 **이미지 스캔본**이면 글자가 안 잡힙니다. OCR이 된 텍스트형 PDF여야 합니다. `/jinhak-harness:verify` 가 어느 줄이 비었는지 한국어로 알려줍니다.
 
 **Q. 삭제하고 싶어요.**
-A.
+A. 깨끗하게 한 번에:
 ```bash
-npm uninstall -g jinhak-harness    # 또는 npm uninstall -g github:ohilikeit/jinhak-vibecode
-rm -rf ~/.harness                   # 모든 설정/기록 삭제 (선택)
+# 1) 6 호스트에서 슬래시 커맨드 제거
+jinhak-harness unregister
+
+# 2) CLI 자체 제거 (npm link로 깐 경우)
+cd ~/Downloads/jinhak-vibecode
+npm unlink -g jinhak-harness
+
+# 3) 클론 폴더 + 설정 삭제 (선택)
+rm -rf ~/Downloads/jinhak-vibecode ~/.harness
 ```
 
 ---
@@ -292,7 +299,7 @@ rm -rf ~/.harness                   # 모든 설정/기록 삭제 (선택)
 ## 9. 막혔을 때 / 도움 요청
 
 - 친절한 한국어 에러 메시지가 어디가 문제인지 알려줍니다 (LLM 호출 없이도)
-- 그래도 해결 안 되면: `/doctor` 결과를 캡처해서 https://github.com/ohilikeit/jinhak-vibecode/issues 에 올려주세요
+- 그래도 해결 안 되면: `/jinhak-harness:doctor` 결과를 캡처해서 https://github.com/ohilikeit/jinhak-vibecode/issues 에 올려주세요
 - 또는 회사 IT 담당자에게 이 문서를 함께 전달해 주세요
 
 ---
@@ -303,16 +310,18 @@ rm -rf ~/.harness                   # 모든 설정/기록 삭제 (선택)
 
 | 슬래시 커맨드 | 동등 CLI 명령 |
 |---|---|
-| `/init` | `jinhak-harness init` |
-| `/doctor` | `jinhak-harness doctor [--refresh]` |
-| `/start` | `jinhak-harness start` |
-| `/plan <요청>` | `jinhak-harness plan "<요청>"` |
-| `/build <요청>` | `jinhak-harness build "<요청>"` |
-| `/verify` | `jinhak-harness verify [--expected-rows N]` |
-| `/handoff` | `jinhak-harness handoff --to <폴더> [--confirm]` |
-| `/ship` | `jinhak-harness ship [--confirm] [--push]` |
-| `/create` | `jinhak-harness create` |
-| `/autopilot <요청>` | `jinhak-harness autopilot "<요청>"` |
+| `/jinhak-harness:register` | `jinhak-harness register` |
+| `/jinhak-harness:unregister` | `jinhak-harness unregister` |
+| `/jinhak-harness:init` | `jinhak-harness init` |
+| `/jinhak-harness:doctor` | `jinhak-harness doctor [--refresh]` |
+| `/jinhak-harness:start` | `jinhak-harness start` |
+| `/jinhak-harness:plan <요청>` | `jinhak-harness plan "<요청>"` |
+| `/jinhak-harness:build <요청>` | `jinhak-harness build "<요청>"` |
+| `/jinhak-harness:verify` | `jinhak-harness verify [--expected-rows N]` |
+| `/jinhak-harness:handoff` | `jinhak-harness handoff --to <폴더> [--confirm]` |
+| `/jinhak-harness:ship` | `jinhak-harness ship [--confirm] [--push]` |
+| `/jinhak-harness:create` | `jinhak-harness create` |
+| `/jinhak-harness:autopilot <요청>` | `jinhak-harness autopilot "<요청>"` |
 
 배치 자동화나 cron 작업에 유용합니다. 슬래시 커맨드와 CLI는 **동일한 백엔드**(bin/install.js)를 호출하므로 결과가 100% 일치합니다.
 

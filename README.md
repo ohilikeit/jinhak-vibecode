@@ -1,7 +1,38 @@
-# 개요
+# jinhak-harness
 
 > 🌱 **처음 써보시는 분은 → [GETTING_STARTED.md](./GETTING_STARTED.md)** (비개발자용, 15분 완성)
-> 🛠 개발자/제작자용 상세 문서 → [USAGE.md](./USAGE.md)
+> 🛠 개발자/제작자용 상세 문서 → [USAGE.md](./USAGE.md) · 변경 이력 → [CHANGELOG.md](./CHANGELOG.md)
+
+비개발자(기획·디자인·마케팅·영업·HR·재무 등)가 본인 도메인 정보만 전달하면 AI가 알아서 자동화 결과물을 만들어주는 한국어 하니스. **Claude Code · Cursor · Codex CLI · Gemini CLI · Google Antigravity · OpenCode 6개 호스트**에서 동일한 `/jinhak-harness:*` 슬래시 커맨드로 동작합니다.
+
+## ⚡ 30초 설치
+
+Windows는 사전에 관리자 PowerShell에서 한 번:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+Git Bash(또는 macOS/Linux 터미널)에서:
+```bash
+cd ~/Downloads
+git clone https://github.com/ohilikeit/jinhak-vibecode.git
+cd jinhak-vibecode && npm link
+jinhak-harness register
+```
+
+그 다음 AI 도구를 종료-재실행하고 채팅창에서:
+```
+/jinhak-harness:autopilot 채용공고 Excel 정리
+```
+
+> 자세한 단계·시나리오·FAQ는 [GETTING_STARTED.md](./GETTING_STARTED.md) 참고.
+
+---
+
+# 설계 배경 / 기능 정의
+
+> **표기 규약**: 아래 설계 문서에서 `/start`, `/build` 같은 표기는 **개념적 함수 이름**입니다.
+> 실제 AI 도구 채팅창에서는 호스트 네임스페이싱이 자동으로 적용되어 `/jinhak-harness:start`, `/jinhak-harness:build` 형태로 노출됩니다. 자세한 등록 절차는 위 Quick Start 참고.
 
 ---
 

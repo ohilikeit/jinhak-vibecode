@@ -6,53 +6,114 @@
 
 ## 0. 한 줄 요약
 
-`설치 → init → doctor → start → plan → build → verify → handoff`. PDF·텍스트·Excel·CSV·마크다운을 오가는 6단계 워크플로우. 8행동 차원·토큰 가드·dry-run 강제·멀티 AI 호환 모두 기본.
+`설치 → register → init → doctor → start → plan → build → verify → handoff`. CLI 백엔드 + 6 AI 호스트 슬래시 커맨드 진입점(`/jinhak-harness:*`). 8행동 차원·토큰 가드·dry-run 강제·멀티 AI 호환 모두 기본.
 
 ---
 
 ## 1. 빠른 시작 (5분)
 
 ```bash
-# 1. 설치
-npm install -g jinhak-harness
-# 또는 1회용
-npx jinhak-harness@latest doctor
+# 1. 클론 + npm link (가장 신뢰성 높은 경로)
+cd ~/Downloads
+git clone https://github.com/ohilikeit/jinhak-vibecode.git
+cd jinhak-vibecode && npm link
 
-# 2. 첫 셋업 (~/.harness 자동 생성)
+# 2. 6 AI 호스트 채팅창에 슬래시 등록 (한 번만)
+jinhak-harness register
+
+# 3. 첫 셋업 (~/.harness 자동 생성)
 jinhak-harness init
 
-# 3. 환경 점검 (의존성/프로필/스킬 카탈로그)
+# 4. 환경 점검 (의존성/프로필/스킬 카탈로그)
 jinhak-harness doctor
 
-# 4. 5문항 직군 인터뷰
+# 5. 5문항 직군 인터뷰
 jinhak-harness start
+```
+
+이후 AI 도구(Claude Code/Cursor/Codex/Gemini/Antigravity/OpenCode) 채팅창에서:
+```
+/jinhak-harness:autopilot 채용공고 Excel 정리
 ```
 
 ---
 
 ## 2. 설치 옵션
 
-### 옵션 A — 글로벌 설치 (권장, 모든 디렉터리에서 호출 가능)
+### 옵션 A — git clone + npm link (현 단계 권장)
 
 ```bash
-npm install -g jinhak-harness
-which jinhak-harness    # 경로 출력되면 OK
-```
-
-### 옵션 B — npx 1회용 (설치 없이)
-
-```bash
-npx jinhak-harness@latest <command>
-```
-
-### 옵션 C — 레포 클론 후 npm link (개발자/기여자용)
-
-```bash
-git clone https://github.com/jihwanyoon/jinhak-vibecode.git
+git clone https://github.com/ohilikeit/jinhak-vibecode.git
 cd jinhak-vibecode
 npm link
-make test-all          # 19 스위트 / 265 assertion 통과 확인
+jinhak-harness --version    # 0.1.0 출력되면 OK
+make test-all               # 22 스위트 전부 통과 확인 (선택)
 ```
+
+`git pull` 한 번으로 업데이트 — symlink라 즉시 반영.
+
+### 옵션 B — npm install -g github:... (Linux/macOS 친화)
+
+```bash
+npm install -g github:ohilikeit/jinhak-vibecode
+```
+
+Windows 일부 환경에서 추출 단계가 묵음 실패하는 사례가 있어 옵션 A를 우선 권장합니다.
+
+### 옵션 C — npm publish 후 (예정)
+
+```bash
+npm install -g jinhak-harness    # publish 풀리면
+```
+
+### Python 도구
+
+PDF/Excel/CSV 처리에 Python + 3개 라이브러리 필요. `doctor` 가 OS별 설치 명령 안내.
+
+```bash
+# 1순위: uv (가장 깔끔)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv tool install --with pdfplumber --with openpyxl --with pandas jinhak-harness-pytools
+
+# 폴백: pip3
+pip3 install --user pdfplumber openpyxl pandas
+```
+
+### Windows 사전 가이드 (필수)
+
+PowerShell이 npm 스크립트를 차단할 수 있어 관리자 PowerShell에서 한 번:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+그 다음 Git Bash에서 옵션 A 진행.
+
+---
+
+## 2.5. 슬래시 커맨드 등록 — `jinhak-harness register`
+
+CLI 설치 후 AI 도구 채팅창에 `/jinhak-harness:*` 형태로 12개 커맨드가 뜨려면 등록 단계가 필요합니다:
+
+```bash
+jinhak-harness register              # 6 호스트 모두 등록
+jinhak-harness register --dry-run    # 미리 보기
+jinhak-harness register --host=claude,cursor  # 특정 호스트만
+jinhak-harness unregister            # 모두 제거
+```
+
+호스트별 등록 위치 (서브디렉터리가 자동으로 네임스페이스가 됨):
+
+| 호스트 | 위치 | 슬래시 |
+|---|---|---|
+| Claude Code | `~/.claude/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| Cursor | `~/.cursor/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| Codex CLI | `~/.codex/prompts/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| Gemini CLI | `~/.gemini/commands/jinhak-harness/*.toml` | `/jinhak-harness:init` |
+| Antigravity | `~/.gemini/antigravity/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| OpenCode | `~/.config/opencode/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+
+등록 후 해당 AI 도구를 **완전히 종료-재실행** 해주세요 (자동완성 캐시 갱신).
 
 ### Python 도구
 
