@@ -72,10 +72,11 @@ test-integration:
 	@./tests/integration/test-meeting-notes-to-summary.sh
 	@./tests/integration/test-expense-pdf-to-csv.sh
 	@./tests/integration/test-user-skill-dynamic.sh
+	@./tests/integration/test-autopilot.sh
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 19 스위트, 265 assertion"
+	@echo "🎉 전 테스트 통과 — 20 스위트, 278 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

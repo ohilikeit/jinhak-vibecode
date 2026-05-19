@@ -43,6 +43,7 @@ function printHelp() {
       '  handoff [--confirm]             dry-run → --confirm 시 복사',
       '  ship [--confirm] [--push]       .harness 변경을 git commit',
       '  create                          새 자동화 스킬 SKILL.md 생성 (인터뷰)',
+      '  autopilot "<요청>"              plan + build + verify 한 번에',
       '',
       '진단/메타:',
       '  --version, -v                   버전 출력',
@@ -192,6 +193,16 @@ switch (cmd) {
   }
   case 'create': {
     const script = path.resolve(__dirname, 'commands', 'create.ts');
+    const result = spawnSync(
+      process.execPath,
+      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      { stdio: 'inherit' },
+    );
+    process.exit(result.status ?? 1);
+    break;
+  }
+  case 'autopilot': {
+    const script = path.resolve(__dirname, 'commands', 'autopilot.ts');
     const result = spawnSync(
       process.execPath,
       ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],

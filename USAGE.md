@@ -343,6 +343,7 @@ cursor .  # 같은 hooks/session-start 가 snake_case 분기로 동작
 | `jinhak-harness handoff [--to D] [--label L] [--confirm]` | 외부 위치 복사 |
 | `jinhak-harness ship [--confirm] [--push]` | `.harness` git 커밋 |
 | `jinhak-harness create` | 새 자동화 SKILL.md + spec.json 생성 |
+| `jinhak-harness autopilot "<요청>" [--expected-rows N]` | plan + build + verify 한 번에 |
 | `jinhak-harness --help` | 전체 카탈로그 |
 | `jinhak-harness --version` | 버전 |
 | `jinhak-harness --debug-loaded [--profile=X]` | 스킬 로드 상태 |
