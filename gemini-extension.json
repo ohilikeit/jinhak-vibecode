@@ -1,0 +1,12 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "Non-developer automation harness — Korean-first, eco token guard, multi-AI compatible",
+  "type": "extension",
+  "skills_directory": ".agents/skills",
+  "hooks": {
+    "on_session_start": "hooks/session-start"
+  },
+  "entry_point": "bin/install.js",
+  "commands": ["doctor", "start", "plan", "build", "verify", "handoff", "ship", "create"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "비개발자 직군 자동화 하니스 — 한국어 우선, eco 토큰 가드, 멀티 AI 호환",
+  "author": "jihwanyoon",
+  "license": "MIT",
+  "hooks": {
+    "session-start": "hooks/session-start"
+  },
+  "skills_dir": ".agents/skills",
+  "commands": [
+    "doctor", "start", "plan", "build", "verify", "handoff", "ship", "create"
+  ],
+  "entry": "bin/install.js",
+  "engines": {
+    "claude-code": ">=2.1.139"
+  }
+}

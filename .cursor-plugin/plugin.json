@@ -1,0 +1,16 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "비개발자 직군 자동화 하니스 (Cursor 호환)",
+  "author": "jihwanyoon",
+  "license": "MIT",
+  "hooks": {
+    "session_start": "hooks/session-start"
+  },
+  "skills_path": ".agents/skills",
+  "rules_path": ".cursor/rules",
+  "entry": "bin/install.js",
+  "engines": {
+    "cursor": ">=0.40.0"
+  }
+}

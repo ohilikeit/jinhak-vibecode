@@ -48,6 +48,7 @@ export JINHAK_PYTHON
 
 test-hooks:
 	@./tests/hooks/test-session-start.sh
+	@./tests/manifests/test-manifests.sh
 
 test-bin:
 	@./tests/bin/test-profile.sh
@@ -73,7 +74,7 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 17 스위트, 227 assertion"
+	@echo "🎉 전 테스트 통과 — 18 스위트, 248 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

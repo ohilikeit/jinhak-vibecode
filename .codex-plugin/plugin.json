@@ -1,0 +1,11 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "비개발자 직군 자동화 하니스 (OpenAI Codex CLI 호환)",
+  "license": "MIT",
+  "hooks": {
+    "session-start": "hooks/session-start"
+  },
+  "skills_dir": ".agents/skills",
+  "entry": "bin/install.js"
+}

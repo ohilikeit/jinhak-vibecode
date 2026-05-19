@@ -1,0 +1,11 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "비개발자 직군 자동화 하니스 (Google Antigravity 호환)",
+  "skills_path": ".agents/skills",
+  "hooks": {
+    "session-start": "hooks/session-start"
+  },
+  "bin": "bin/install.js",
+  "agentskill_format": "v1"
+}
