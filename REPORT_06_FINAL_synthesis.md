@@ -123,6 +123,23 @@ class MemoryProvider(ABC):
 - **플러그인 동적 발견 (`importlib.util` 네임스페이스 충돌 처리)** — 번들 플러그인이 사용자 설치 플러그인보다 우선
 - **31개 게이트웨이 어댑터** 아키텍처 (slack/discord/telegram/teams/email 등) — v0.3+ 옵션
 
+> **2026-05-19 추가 조사 결과 — Hermes scheduler.py(1837줄) / batch_runner.py / delegate_tool.py(2228줄)는 차용하지 않는다.**
+> 비개발자 하네스에 production-grade cron 데몬·multiprocessing pool·child agent 런타임은 과잉.
+> Claude Code `CronCreate`/`Task`/`run_in_background` + OS cron/launchd/schtasks가 이미 처리한다.
+> 우리는 한국어 자연어→cron 변환 ~200줄 shim만 갖는다. 상세: [ADR-004](docs/adr/ADR-004-scheduler-and-background.md).
+
+### 3.3-bis [Hermes-tools] — 3계층 분리 + lazy_deps + `tools/` 70+ 레지스트리 (v2 보강)
+
+5개 레퍼런스 중 **유일하게 "재사용 가능한 유틸 스크립트 레이어"를 명시적으로 분리**한 사례. 우리 `common/utils/` 레이어의 직접 모델.
+
+- **3계층 분리**: `tools/`(70+ 저수준 도구) + `plugins/`(메모리·컨텍스트 등 코어 재사용) + `skills/`(사용자 향한 번들). 우리도 직군 스킬과 유틸리티를 분리한다.
+- **`lazy_deps.py` 패턴**: 백엔드 의존성(anthropic, firecrawl, pdfplumber, openpyxl 등)을 **첫 사용 시점에 venv-scoped로 설치**, allowlist 기반. 부트스트랩 비대화 방지.
+- **`tools/registry.py`**: 도구 발견 + 권한 검증을 1곳에서. 우리 `bin/utils-registry.ts` 가 동일 역할 (compatibility 캐싱 포함).
+- **실 PDF/문서 처리 스크립트**:
+  - `skills/productivity/ocr-and-documents/scripts/extract_pymupdf.py` (pymupdf, 경량 ~25MB)
+  - `skills/productivity/ocr-and-documents/scripts/extract_marker.py` (marker-pdf, OCR+레이아웃, 옵셔널)
+- **차용 결정**: 라이브러리 선정은 우리 환경(비개발자·한글·표 추출 빈도)에 맞춰 **pdfplumber + openpyxl로 변경**, 패턴(lazy 디텍션 + Node↔Python spawn+JSON)은 그대로.
+
 ### 3.4 [Knowledge Work Plugins] — 17개 직군 카탈로그 + 카테고리 도구 추상화
 **채택**: 우리 v0.2~0.3 "직군별 스타터 팩"의 청사진. KW Plugins의 **실제 17개 빌트인**을 기준으로 한국 시장 우선순위 재배치:
 
@@ -143,6 +160,20 @@ class MemoryProvider(ABC):
 - **`~~CRM`, `~~email`, `~~chat` 카테고리 플레이스홀더** → CONNECTORS.md에서 실제 SaaS 매핑. KW가 일부 플러그인만 적용한 약점은 **우리는 모든 직군에 강제**.
 - **`settings.local.json`으로 회사 톤·정책·조직도 1회 주입**
 - **`user-invocable` 필드 활용한 RBAC 1급 도입** (KW는 필드만 존재, 사용은 거의 없음 → 우리가 활용)
+
+### 3.4-bis [KW-bio-research] — Tier-fallback 추출 전략 + 스키마 검증 패턴
+
+17개 occupation 중 **bio-research 1곳만** 진짜 PDF/Excel 처리 스크립트를 갖춤. 그 구조를 직군 공통 utils로 끌어올린다.
+
+- **참고 파일**:
+  - `bio-research/skills/instrument-data-to-allotrope/scripts/convert_to_asm.py` (543줄) — PDF/CSV/Excel → JSON 변환, allotropy 기반 멀티 포맷
+  - `flatten_asm.py` (254줄) — JSON → 2D CSV (Excel import ready)
+  - `validate_asm.py` (1102줄) — 스키마 기반 검증
+- **차용 패턴**:
+  1. **Multi-tier 추출**: Tier 1 native parser → Tier 2 fallback → Tier 3 PDF extraction. 우리 `pdf-extract/compatibility.json`의 tier 구조 그대로.
+  2. **JSON 중간 표현 강제**: 모든 추출 결과를 일단 JSON으로 정규화 후 출력 포맷(Excel) 변환. Node↔Python 경계와 자연스럽게 일치.
+  3. **스키마 검증 분리**: 추출과 검증을 별도 스크립트로 분리 → 직군 스킬은 검증만 호출 가능.
+- **KW의 약점**: bio-research 한 곳에만 존재, 다른 16개 occupation엔 없음 → **우리는 직군 공통화하면 KW를 넘어선다.**
 
 ### 3.5 [Superpowers] — 환경변수 감지 훅 + 멀티 manifest + 압박 테스트
 **채택**: 멀티 AI 호환의 **유일한 검증된 패턴**:
@@ -195,6 +226,7 @@ harness/
 | **8** | **친절한 실패 리포트 (템플릿 기반)** | 모두 기술적 로그 | "지난 주 정상 작동했던 ◯◯ 케이스가 이번엔 △△로 바뀌었어요" — **LLM 변환이 아닌 변수 치환 템플릿** (토큰 절약) |
 | **9** | **드라이런(Dry-run) 강제** | 부분만 존재 | 외부 전송·파일 삭제·결제 등 부수효과는 실행 전 미리보기 + 명시 승인 |
 | **10** | **토큰 경제 Eco-First 설계** | 모두 미고려 | 월 3만원 구독자의 4시간 윈도우 보호: 검증·벤치·풀캡처는 기본 OFF, 옵트인 |
+| **11** | **공용 utils 레이어 (`common/utils/`)** | Hermes만 부분 구현(Python 단일), KW는 bio-research 1곳, 나머지 3개 부재 | Hermes `tools/`+`lazy_deps.py` + KW bio-research multi-tier 추출 전략 + 직군 스킬 `requires:` frontmatter 의존. pdfplumber/openpyxl/pandas를 npm 패키지에 `.py` 동봉, Python 런타임은 `uv tool install`로 lazy 디텍션. OCR은 도입 안 함 |
 
 ---
 
@@ -248,6 +280,16 @@ harness/
 │   각 SKILL.md = YAML frontmatter + 본문 (≤500줄)             │
 │   500줄 초과 시 references/ 자동 분할 (Progressive Disclosure)│
 │   auto-trigger Skills (KW 모델) + RBAC `user-invocable`     │
+└──────────────────────────────────────────────────────────────┘
+          ↓ requires
+┌──────────────────────────────────────────────────────────────┐
+│  Layer 3': 공용 유틸리티 (Hermes tools/ + KW bio-research)   │
+│   common/utils/{pdf-extract,xlsx-read,xlsx-write,csv-rw}/    │
+│   pdfplumber + openpyxl + pandas (Python 단일 런타임)        │
+│   lazy 디텍션 + uv tool install 1순위 안내                   │
+│   compatibility.json tier-fallback (tier1 fast → tier2 정확) │
+│   Node ↔ Python: spawn + JSON stdin/stdout                   │
+│   직군 스킬은 `requires:` frontmatter로 의존 선언            │
 └──────────────────────────────────────────────────────────────┘
           ↓ uses
 ┌──────────────────────────────────────────────────────────────┐
@@ -436,7 +478,7 @@ npx jinhak-harness@latest
 
 | 단계 | 기본 프로필 | 포함 기능 | 차용 출처 | 신규(우리 고유) |
 |---|---|---|---|---|
-| **MVP** | `eco` | npm CLI + 직군 인터뷰 + SKILL.md 생성 + 5개 도구 호환 훅 + 기본 스킬 10개 + 로컬 SQLite 메모리(prefetch OFF) + 컨텍스트 압축 + Haiku 라우팅 | GSD(설치/프로필), Superpowers(훅/멀티 어댑터), KW Plugins(직군), Karpathy(원칙+alwaysApply) | 비개발자 인터뷰 + 토큰 가드 UX |
+| **MVP** | `eco` | npm CLI + 직군 인터뷰 + SKILL.md 생성 + 5개 도구 호환 훅 + 기본 스킬 10개 + **`common/utils/` 4개 (pdf-extract=pdfplumber / xlsx-read=openpyxl / xlsx-write=openpyxl / csv-rw=pandas — Python 단일 런타임)** + Python lazy 디텍션(uv 가이드) + 로컬 SQLite 메모리(prefetch OFF) + 컨텍스트 압축 + Haiku 라우팅 | GSD(설치/프로필), Superpowers(훅/멀티 어댑터), KW Plugins(직군), Karpathy(원칙+alwaysApply), **Hermes(tools/+lazy_deps), KW bio-research(multi-tier)** | 비개발자 인터뷰 + 토큰 가드 UX + **`requires:` frontmatter 의존 선언** |
 | **MVP** | `standard` | + Description Tuner 1회 + 명시 호출 evals + Skill Creator 요약 1회 | Hermes(on_session_end 훅) | 1회성 Description Tuner |
 | **v0.2** | `standard`+ | 도구 통합 5종(Notion/Gmail/Figma/Slack/Webhook) + `DESIGN.md` + design-html + 직군 스킬 5종 추가 | Hermes(메모리 9+9 훅), KW Plugins(MCP 카테고리) | design-html |
 | **v0.3** | `power` | with/without 벤치(명시 호출) + design-shotgun(2변형)/review + 신뢰 게이팅 + compatibility 도구 설치 가이드 + 스케줄링 + 직군 스타터 팩 확장 | GSD(권한 사전 승인), Superpowers(압박 테스트) | 친절 실패 리포트 템플릿 |
@@ -540,3 +582,5 @@ npx jinhak-harness@latest
 **향후 별도 문서 (v1.0 대비)**:
 - ADR-001: Skill Surface Budget (GSD 차용) — MVP 직전 작성
 - ADR-002: 사내 Postgres 메모리 자동 동기화 — 보안·권한·conflict resolution 설계, v1.0 진입 전 작성
+- **[ADR-003: Common Utils Layer](docs/adr/ADR-003-common-utils-layer.md)** — pdfplumber/openpyxl/pandas를 npm으로 동봉, Python lazy 디텍션, Tier-fallback — MVP 동봉, 작성 완료
+- **[ADR-004: Scheduler & Background Strategy](docs/adr/ADR-004-scheduler-and-background.md)** — Subagent/Background/Cron은 호스트·OS 위임. Hermes scheduler.py(1837줄) 차용 거부, ~250줄 shim만 — MVP 적용, 작성 완료

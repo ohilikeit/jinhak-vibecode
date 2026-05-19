@@ -71,6 +71,41 @@ skill-name/
     - `compatibility` 필드로 명시된 외부 의존성(예: `gh`, Slack 토큰)이 없으면 설치 가이드 자동 트리거
     - 안전이 검증된 스킬은 `allowed-tools`로 권한 사전 승인하여 권한 팝업 피로감 감소
 
+### B'. 공용 유틸리티 레이어 (`common/utils/`)
+
+고빈도 작업(PDF 파싱, Excel 읽기/쓰기, CSV)은 직군 스킬마다 새로 짜지 않고
+`common/utils/` 의 검증된 스킬을 **얇은 호출**로 재사용한다. Hermes의 `tools/` + `lazy_deps.py`
+패턴, KW Plugins bio-research의 multi-tier 추출 전략을 차용한다.
+
+- **MVP 동봉 utils 4개** (전부 Python 기반 단일 런타임)
+    - `pdf-extract` — Python `pdfplumber` (텍스트 + 표)
+    - `xlsx-read` — Python `openpyxl`
+    - `xlsx-write` — Python `openpyxl` (템플릿 복사 + 셀 채우기, 스타일 보존)
+    - `csv-rw` — Python `pandas` (대용량·인코딩 자동 감지·dtype 추론)
+    - docx-extract 등은 v0.2+ 옵셔널 (OCR은 도입 안 함)
+- **Python 런타임 lazy 디텍션**
+    - npm 패키지는 `.py` 파일을 함께 동봉(`files:` 필드)
+    - 첫 실행 시 Python·pdfplumber·openpyxl 디텍션 → 없으면 **OS별 1줄 설치 가이드** (`uv tool install` 1순위)
+    - postinstall로 pip install 강제 X (권한·실패 이슈 회피)
+    - 디텍션 결과 `~/.harness/env-cache.json`에 7일 캐싱
+- **Node ↔ Python 결합 방식**
+    - `child_process.spawn('python3', ['extract.py', ...])` + JSON stdin/stdout만
+    - Python 측은 의존성·라이프사이클·세션 무관 (one-shot)
+- **직군 스킬은 `requires:` frontmatter로 의존 선언**
+    ```yaml
+    ---
+    name: jobs-pdf-to-excel
+    requires:
+      - common/utils/pdf-extract
+      - common/utils/xlsx-write
+    ---
+    ```
+    → 직군 스킬은 도메인 룰만 갖는 얇은 정의(~50줄). pdf 추출 코드를 30개 직군에 복붙할 일 없음.
+- **Tier-fallback 전략** (각 utils의 `compatibility.json`)
+    - tier 1: 가장 가볍고 빠른 경로 / tier 2: 더 정확하지만 무거운 경로
+    - PDF 표 감지 시 자동 tier 승격 제안 (사용자 승인)
+- **상세**: [ADR-003 Common Utils Layer](docs/adr/ADR-003-common-utils-layer.md)
+
 ### C. 도구 통합 & 외부 채널
 
 - **도구 카탈로그 + 가이드 설치**
@@ -78,9 +113,14 @@ skill-name/
     - 각 도구별: "이 도구 쓰려면 ① 가입 ② 토큰 발급 ③ 여기 붙여넣기" 까지 단계별 안내
 - **인증 정보 안전 저장**
     - `.env` + 시스템 keychain 활용, 절대 저장소에 커밋 금지 훅 내장
-- **스케줄링**
-    - 로컬 cron / bitbucket pipelines / 로컬 데몬 중 사용자 환경에 맞게 자동 선택·생성
-    - **아이디어 : 사내에서 관리하는 cronjob(자동화 스크립트) 등록 플랫폼을 운영해서 등록하고 결과 db에 자동 저장해서 꺼내볼 수 있게 하기? (보안 문제 있음)**
+- **스케줄링 — 호스트 네이티브 위임 (자체 데몬 X)**
+    - Claude Code 세션 안에선 **`CronCreate` 직접 사용** (이미 있는 네이티브 기능, 0줄 구현)
+    - macOS는 `launchctl` plist, Linux/WSL은 `crontab`, Windows는 `schtasks`
+    - 우리는 한국어 자연어("매주 월요일 9시") → cron 표현 변환만 담당 (~200줄 shim)
+    - **자체 스케줄러 데몬 띄우지 않음** — 토큰·전원 관리·OS 절전·multi-host 호환 모두 호스트/OS가 처리
+    - Subagent / Background도 동일: Claude Code `Task` / `run_in_background` / hooks 그대로 사용, 자체 worker pool·batch runner X
+    - 상세: [ADR-004 Scheduler & Background Strategy](docs/adr/ADR-004-scheduler-and-background.md)
+    - **아이디어 (v1.0+)**: 사내에서 관리하는 cronjob 등록 플랫폼은 별도 ADR로 보안·권한 설계 (현재 범위 아님)
 
 ### D. AI 도구 호환성 레이어
 
@@ -167,7 +207,7 @@ skill-name/
 
 | 단계 | 프로필 | 포함 기능 |
 | --- | --- | --- |
-| **MVP** | `eco` (기본) | 온보딩 인터뷰 → `.agents/skills/<name>/SKILL.md` 생성, 점진적 공개 구조 강제, 기본 스킬 10개, 로컬 SQLite 메모리(자동 prefetch OFF), 컨텍스트 압축 default ON, Haiku 라우팅 |
+| **MVP** | `eco` (기본) | 온보딩 인터뷰 → `.agents/skills/<name>/SKILL.md` 생성, 점진적 공개 구조 강제, 기본 스킬 10개, **`common/utils/` 4개 동봉 (pdf-extract / xlsx-read / xlsx-write / csv-rw — Python lazy 디텍션)**, 로컬 SQLite 메모리(자동 prefetch OFF), 컨텍스트 압축 default ON, Haiku 라우팅 |
 | **MVP** | `standard` (옵트인) | + **Description Tuner 1회 실행** (스킬 생성 시점 한정), 명시 호출 evals |
 | **v0.2** | `standard`+ | **Skill Creator (세션 종료 시 요약 1회 — 풀 캡처 X)**, 도구 통합 5종 (Figma/Notion/Gmail/Teams/Webhook), `DESIGN.md` + `design-html` |
 | **v0.3** | `power` (파워유저) | with/without 벤치마크(명시 호출), `design-shotgun`(2변형) / `design-review`, 압박 테스트 서브에이전트, 신뢰 게이팅, compatibility 도구 설치 가이드, 스케줄링, 직군별 스타터 팩 |
@@ -187,6 +227,8 @@ npx jinhak-harness@latest --profile=power    # 모든 자동 검증 ON
 3. **공식 표준을 따른다** — `.agents/skills/`와 SKILL.md 포맷을 1차 출력으로 고정하여 AI 도구 락인 방지
 4. **암묵지를 명시화** — 사용자 머릿속 도메인 지식·정상 출력 예시·디자인 취향을 모두 파일로 끌어내 저장
 5. **토큰 경제 우선, 검증은 옵트인** — 월 3만원 구독자의 4시간 토큰 윈도우를 보호한다. Description Tuner / with-without 벤치마크 / 풀 대화 캡처 / 매 턴 의미검색 / 매 실행 evals / 압박 테스트는 **기본 OFF**, 사용자가 명시 호출하거나 `--profile=standard|power` 일 때만 ON
+6. **검증된 utils를 재사용한다** — PDF 파싱·Excel R/W 같은 고빈도 작업은 새 스크립트를 합성하지 않고 `common/utils/` 의 검증된 스킬을 `requires:` frontmatter로 호출한다. 직군 30개에 같은 파싱 코드를 합성하면 토큰·유지보수 모두 폭발한다.
+7. **호스트가 주는 것은 다시 만들지 않는다** — subagent·background·cron은 Claude Code/Cursor/Codex/OS가 이미 검증된 구현을 제공한다 (`Task` / `run_in_background` / `CronCreate` / cron / launchd / schtasks). 자체 런타임(스케줄러 데몬·worker pool·batch runner)을 만들면 토큰·유지보수·OS 절전 처리·multi-host 호환 부담만 증가한다. 우리 역할은 비개발자가 그것을 쉽게 호출하게 하는 얇은 shim.
 
 ## 4.5. 오케스트레이션 슬래시 커맨드 (Layer 2.5)
 
