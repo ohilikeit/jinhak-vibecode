@@ -25,7 +25,7 @@ run_capture node "$INSTALL" doctor --refresh
 printf '\n--- A. doctor 출력 ---\n%s\n(exit %d)\n' "$OUT" "$RC"
 
 # 6개 섹션 모두 존재
-for section in '## 1. 환경' '## 2. 프로필' '## 3. 의존성' '## 4. 스킬 카탈로그' '## 5. 최근 활동' '## 진단 결과'; do
+for section in '## 1. 환경' '## 2. 프로필' '## 3. 의존성' '## 4. 스킬 카탈로그' '## 5. 메모리' '## 6. 최근 활동' '## 진단 결과'; do
   case "$OUT" in
     *"$section"*) ok "섹션 존재: $section" ;;
     *) ng "섹션 누락: $section" ;;

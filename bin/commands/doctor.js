@@ -11,6 +11,7 @@ const { harnessHome, agentsSkillsHome, isDevMode } = require('../paths.js');
 const { resolveProfile, budgetFor } = require('../profile.js');
 const { loadSkills } = require('../skills-loader.js');
 const { detectAll, hintFor } = require('../lazy-deps.js');
+const memory = require('../memory.js');
 
 function statusLine(label, value, level) {
   const icon = level === 'ok' ? '✅' : level === 'warn' ? '⚠️ ' : level === 'err' ? '❌' : 'ℹ️ ';
@@ -98,8 +99,27 @@ function main() {
   }
   lines.push('');
 
-  // ── 5. 최근 활동 (.harness/state.md) ────────────────────
-  lines.push('## 5. 최근 활동');
+  // ── 5. 메모리 (facade summarizeSession) ─────────────────
+  lines.push('## 5. 메모리');
+  try {
+    const sum = memory.summarizeSession();
+    lines.push(statusLine('memory_root', sum.memory_root, 'info'));
+    lines.push(statusLine('이 프로젝트 결정 수', String(sum.decision_count_project), 'info'));
+    lines.push(statusLine('전체 결정 로그', String(sum.decision_count_total), 'info'));
+    if (sum.keys.length) {
+      lines.push('현재 프로젝트 키:');
+      for (const k of sum.keys.slice(0, 5)) lines.push(`  - ${k}`);
+    } else {
+      lines.push('  (아직 결정 없음 — /handoff --confirm 후 last_handoff 기록됩니다)');
+    }
+  } catch (err) {
+    warnings += 1;
+    lines.push(statusLine('memory', `읽기 실패: ${err.message}`, 'warn'));
+  }
+  lines.push('');
+
+  // ── 6. 최근 활동 (.harness/state.md) ────────────────────
+  lines.push('## 6. 최근 활동');
   const stateMd = path.join(process.cwd(), '.harness', 'state.md');
   if (fs.existsSync(stateMd)) {
     const content = fs.readFileSync(stateMd, 'utf-8');
@@ -117,7 +137,7 @@ function main() {
   }
   lines.push('');
 
-  // ── 6. 최종 진단 ────────────────────────────────────────
+  // ── 7. 최종 진단 ────────────────────────────────────────
   lines.push('## 진단 결과');
   if (issues === 0 && warnings === 0) {
     lines.push('🎉 모두 정상 — /plan 명령으로 자동화를 시작하세요.');

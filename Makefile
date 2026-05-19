@@ -55,6 +55,7 @@ test-bin:
 	@./tests/bin/test-cost-label.sh
 	@./tests/bin/test-skill-flags.sh
 	@./tests/bin/test-user-profiler.sh
+	@./tests/bin/test-memory.sh
 
 test-commands:
 	@./tests/commands/test-start.sh
@@ -72,7 +73,7 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 16 스위트, 217 assertion"
+	@echo "🎉 전 테스트 통과 — 17 스위트, 227 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

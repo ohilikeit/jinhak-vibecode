@@ -14,6 +14,7 @@ import * as path from "node:path";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { formatError, HarnessError } = require("../friendly-error.js");
+const memory = require("../memory.js");
 
 interface Args {
   output: string;
@@ -116,6 +117,14 @@ function main(): number {
   const timestamp = new Date().toISOString();
   const entry = `${timestamp}  ${path.basename(args.output)} → ${targetPath}`;
   const stateMd = appendStateLog(path.join(process.cwd(), ".harness"), entry);
+
+  // 메모리에 결정 기록 (facade 1: saveDecision)
+  memory.saveDecision("last_handoff", {
+    timestamp,
+    source: args.output,
+    target: targetPath,
+    label: args.label,
+  });
 
   process.stdout.write(
     [
