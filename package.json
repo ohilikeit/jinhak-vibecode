@@ -1,21 +1,54 @@
 {
   "name": "jinhak-harness",
   "version": "0.1.0",
-  "description": "Jinhak vibe-coding harness — global CLI scaffold for agent skills and hooks.",
+  "description": "비개발자 직군 자동화 하니스 — 한국어 우선, 토큰 가드 eco 기본, Claude Code/Cursor/Codex/Gemini/Antigravity/OpenCode 모두 호환",
+  "keywords": [
+    "agent",
+    "agentskill",
+    "automation",
+    "claude-code",
+    "cursor",
+    "korean",
+    "non-developer",
+    "skill",
+    "workflow",
+    "vibe-coding"
+  ],
+  "homepage": "https://github.com/jihwanyoon/jinhak-vibecode#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jihwanyoon/jinhak-vibecode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jihwanyoon/jinhak-vibecode/issues"
+  },
+  "author": "jihwanyoon",
+  "license": "MIT",
   "bin": {
     "jinhak-harness": "./bin/install.js"
   },
   "files": [
     "bin/",
     "templates/",
-    "hooks/"
+    "hooks/",
+    ".claude-plugin/",
+    ".cursor-plugin/",
+    ".codex-plugin/",
+    ".antigravity/",
+    ".opencode/",
+    "gemini-extension.json",
+    "README.md",
+    "USAGE.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "version:print": "node bin/install.js --version"
+    "version:print": "node bin/install.js --version",
+    "test": "make test-all",
+    "postinstall": "node bin/postinstall.js || true"
   },
-  "license": "MIT",
-  "private": true
+  "private": false
 }

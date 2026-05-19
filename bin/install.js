@@ -11,8 +11,8 @@ const pkg = require('../package.json');
 
 function emitCostLabel(cmd) {
   // 메타/진단성은 라벨 생략
-  if (['paths', 'doctor', 'ship'].includes(cmd)) {
-    // doctor/ship은 자기 안에서 출력함; paths는 정보성이라 생략
+  if (['paths', 'doctor', 'ship', 'init'].includes(cmd)) {
+    // doctor/ship/init은 자기 안에서 출력; paths는 정보성
     return;
   }
   let profile = 'eco';
@@ -34,7 +34,8 @@ function printHelp() {
       '사용법: jinhak-harness <command> [options]',
       '',
       '워크플로우 (권장 순서):',
-      '  doctor                          환경/의존성/스킬 진단 (선택)',
+      '  init                            홈 디렉터리 초기화 (첫 실행 시)',
+      '  doctor                          환경/의존성/스킬 진단',
       '  start                           5문항 직군 인터뷰 + 프로필 생성',
       '  plan "<요청>"                   요청 분석 → .harness/plans/*.md',
       '  build "<요청>"                  실제 실행 (PDF→Excel / 회의록→md 등)',
@@ -169,6 +170,12 @@ switch (cmd) {
   }
   case 'doctor': {
     const script = path.resolve(__dirname, 'commands', 'doctor.js');
+    const result = spawnSync(process.execPath, [script, ...args.slice(1)], { stdio: 'inherit' });
+    process.exit(result.status ?? 1);
+    break;
+  }
+  case 'init': {
+    const script = path.resolve(__dirname, 'commands', 'init.js');
     const result = spawnSync(process.execPath, [script, ...args.slice(1)], { stdio: 'inherit' });
     process.exit(result.status ?? 1);
     break;
