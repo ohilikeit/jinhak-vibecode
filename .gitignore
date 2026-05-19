@@ -4,3 +4,5 @@ dev-home/
 test-*/
 !test-fixtures/
 .venv-dev/
+__pycache__/
+*.pyc
