@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const { harnessHome, agentsSkillsHome, isDevMode } = require('./paths.js');
 const pkg = require('../package.json');
 
@@ -55,6 +57,17 @@ switch (cmd) {
     printPaths();
     process.exit(0);
     break;
+  case 'start': {
+    // start.ts를 type-stripping 모드로 child process에서 실행
+    const script = path.resolve(__dirname, 'commands', 'start.ts');
+    const result = spawnSync(
+      process.execPath,
+      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      { stdio: 'inherit' },
+    );
+    process.exit(result.status ?? 1);
+    break;
+  }
   default:
     process.stderr.write(`jinhak-harness: unknown command "${cmd}"\n`);
     process.stderr.write(`Run "jinhak-harness --help" for usage.\n`);
