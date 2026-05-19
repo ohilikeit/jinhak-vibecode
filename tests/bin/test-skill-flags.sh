@@ -59,7 +59,7 @@ n=$(node -e "
   const { loadUserInvocable } = require('$ROOT/bin/skills-loader.js');
   console.log(loadUserInvocable('$ROOT/templates', 'eco').length);
 ")
-[ "$n" -eq 2 ] && ok "loadUserInvocable → 2개 (jobs + meetings)" || ng "loadUserInvocable=$n (기대 2)"
+[ "$n" -eq 3 ] && ok "loadUserInvocable → 3개 (jobs + meetings + expense)" || ng "loadUserInvocable=$n (기대 3)"
 
 # 3) /doctor가 플래그를 카탈로그에 표시
 out=$(AGENTS_SKILLS_HOME="$ROOT/templates/.agents/skills" node "$ROOT/bin/install.js" doctor --refresh 2>&1)

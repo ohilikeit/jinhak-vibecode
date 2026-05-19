@@ -14,6 +14,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { extract } from "../../templates/common/utils/pdf-extract/scripts/extract.ts";
 import { write } from "../../templates/common/utils/xlsx-write/scripts/write.ts";
+import { write as writeCsv } from "../../templates/common/utils/csv-write/scripts/write.ts";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { formatError, HarnessError } = require("../friendly-error.js");
@@ -27,6 +28,9 @@ interface Args {
   // meeting-notes-to-summary
   inboxMeetings: string;
   outputMeetings: string;
+  // expense-pdf-to-csv
+  inboxReceipts: string;
+  outputExpenses: string;
   // 공통
   python?: string;
 }
@@ -50,8 +54,17 @@ function parseArgs(argv: string[]): Args {
     outputJobs: opt("--output", path.join(cwd, "output", "jobs.xlsx")),
     inboxMeetings: opt("--inbox-meetings", path.join(cwd, "inbox", "meetings")),
     outputMeetings: opt("--output-meetings", path.join(cwd, "output", "meeting-summary.md")),
+    inboxReceipts: opt("--inbox-receipts", path.join(cwd, "inbox", "receipts")),
+    outputExpenses: opt("--output-expenses", path.join(cwd, "output", "expenses.csv")),
     python: process.env.JINHAK_PYTHON,
   };
+}
+
+function parseAmount(raw: string): number {
+  const digits = raw.replace(/[^0-9-]/g, "");
+  if (!digits) return 0;
+  const n = Number(digits);
+  return Number.isFinite(n) ? n : 0;
 }
 
 // ── 공용 헬퍼 ─────────────────────────────────────────────
@@ -87,7 +100,7 @@ interface Rule {
 const RULES: Rule[] = [
   {
     skill: "jobs-pdf-to-excel",
-    keywords: ["채용공고", "공고", "PDF", "Excel", "엑셀", "스프레드시트"],
+    keywords: ["채용공고", "공고", "Excel", "엑셀", "스프레드시트"],
     describeIO: (a) => [
       `  inbox=${a.inboxJobs}`,
       `  template=${a.templateJobs}`,
@@ -134,6 +147,51 @@ const RULES: Rule[] = [
         python: a.python,
       });
       return { output: r.output, rows: r.rows_written };
+    },
+  },
+  {
+    skill: "expense-pdf-to-csv",
+    keywords: ["영수증", "지출", "경비", "비용 정산", "비용정산"],
+    describeIO: (a) => [
+      `  inbox=${a.inboxReceipts}`,
+      `  output=${a.outputExpenses}`,
+    ],
+    run: async (a) => {
+      if (!fs.existsSync(a.inboxReceipts))
+        throw new HarnessError("inbox-not-found", "inbox missing", {
+          path: a.inboxReceipts,
+          skill: "expense-pdf-to-csv",
+        });
+      const pdfs = fs
+        .readdirSync(a.inboxReceipts)
+        .filter((f) => f.toLowerCase().endsWith(".pdf"))
+        .map((f) => path.join(a.inboxReceipts, f))
+        .sort();
+      if (pdfs.length === 0)
+        throw new HarnessError("inbox-empty", "no pdf", {
+          path: a.inboxReceipts,
+          kind: "PDF",
+          ext: ".pdf",
+        });
+      const rows: Record<string, string | number>[] = [];
+      let total = 0;
+      for (const pdf of pdfs) {
+        const { pages } = await extract(pdf, { python: a.python });
+        const text = pages.map((p) => p.text).join("\n");
+        const amountRaw = pickField(text, ["금액"]) ?? "0";
+        const amount = parseAmount(amountRaw);
+        total += amount;
+        rows.push({
+          일자: pickField(text, ["일자", "날짜"]) ?? "(미기재)",
+          금액: amount,
+          항목: pickField(text, ["항목", "용도"]) ?? "(미기재)",
+          부서: pickField(text, ["부서"]) ?? "(미기재)",
+        });
+      }
+      rows.push({ 일자: "합계", 금액: total, 항목: "", 부서: "" });
+      fs.mkdirSync(path.dirname(a.outputExpenses), { recursive: true });
+      const r = await writeCsv({ output: a.outputExpenses, rows, python: a.python });
+      return { output: r.output, rows: r.rows };
     },
   },
   {

@@ -66,10 +66,11 @@ test-commands:
 test-integration:
 	@./tests/integration/test-jobs-pdf-to-excel.sh
 	@./tests/integration/test-meeting-notes-to-summary.sh
+	@./tests/integration/test-expense-pdf-to-csv.sh
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 13 스위트, 167 assertion"
+	@echo "🎉 전 테스트 통과 — 14 스위트, 180 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:
