@@ -1,6 +1,8 @@
 ---
 name: meeting-notes-to-summary
 description: 폴더(inbox/meetings/)에 모인 회의록 텍스트 파일을 한 장의 마크다운 요약표로 정리합니다. Use when 사용자가 "회의록 요약", "회의 정리", "액션 아이템 모아줘" 등을 말할 때.
+user-invocable: true
+alwaysApply: false
 requires: []
 allowed-tools:
   - Read

@@ -1,6 +1,8 @@
 ---
 name: common/utils/xlsx-write
 description: 정해진 헤더의 Excel 템플릿(xlsx)을 복사한 뒤 데이터 행을 채워 넣어 새로운 xlsx 파일을 만듭니다. Use when 사용자가 "Excel로 정리", "스프레드시트로 저장", "양식에 채워줘" 등을 말할 때, 또는 다른 직군 스킬이 `requires:` 항목으로 이 utility를 선언했을 때.
+user-invocable: false
+alwaysApply: false
 requires:
   - python3
   - openpyxl

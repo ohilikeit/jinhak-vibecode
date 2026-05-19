@@ -88,7 +88,12 @@ function main() {
     lines.push(statusLine('skills_dir', skillsDir, 'info'));
     lines.push(statusLine('skills_found', String(skillList.length), 'ok'));
     for (const s of skillList) {
-      lines.push(`  - \`${s.name}\` (body ${s.body_bytes}B, ${s.body_eligible ? 'eligible' : 'not loaded'})`);
+      const flags = [];
+      if (s.alwaysApply) flags.push('alwaysApply');
+      flags.push(s.userInvocable ? 'user-invocable' : 'internal');
+      lines.push(
+        `  - \`${s.name}\` (body ${s.body_bytes}B, ${s.body_eligible ? 'eligible' : 'not loaded'}, ${flags.join(', ')})`,
+      );
     }
   }
   lines.push('');

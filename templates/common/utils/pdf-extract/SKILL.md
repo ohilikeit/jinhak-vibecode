@@ -1,6 +1,8 @@
 ---
 name: common/utils/pdf-extract
 description: PDF 파일에서 페이지별 텍스트와 표(table)를 추출해 JSON으로 반환합니다. Use when 사용자가 PDF 파일 내용을 읽거나 표를 뽑아야 한다고 말할 때, 또는 다른 직군 스킬이 `requires:` 항목으로 이 utility를 선언했을 때.
+user-invocable: false
+alwaysApply: false
 requires:
   - python3
   - pdfplumber

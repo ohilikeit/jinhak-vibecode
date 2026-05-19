@@ -34,6 +34,14 @@ function parseFrontmatter(raw) {
   return { frontmatter, body: m[2] };
 }
 
+function parseBoolish(v) {
+  if (v === undefined || v === null) return undefined;
+  const s = String(v).trim().toLowerCase();
+  if (s === 'true' || s === 'yes' || s === '1') return true;
+  if (s === 'false' || s === 'no' || s === '0') return false;
+  return undefined;
+}
+
 function loadSkills(skillsDir, profile) {
   const budget = budgetFor(profile);
   const files = findSkillFiles(skillsDir);
@@ -41,6 +49,11 @@ function loadSkills(skillsDir, profile) {
   for (const file of files) {
     const raw = fs.readFileSync(file, 'utf-8');
     const { frontmatter, body } = parseFrontmatter(raw);
+    // Karpathy alwaysApply: 명시되지 않으면 false
+    const alwaysApply = parseBoolish(frontmatter && frontmatter.alwaysApply) === true;
+    // RBAC user-invocable: 명시되지 않으면 true (기본은 사용자 호출 가능)
+    const userInvocableRaw = parseBoolish(frontmatter && frontmatter['user-invocable']);
+    const userInvocable = userInvocableRaw === undefined ? true : userInvocableRaw;
     skills.push({
       path: file,
       name: frontmatter && frontmatter.name ? frontmatter.name : path.basename(path.dirname(file)),
@@ -49,9 +62,21 @@ function loadSkills(skillsDir, profile) {
       body_loaded: budget.body_at_boot,
       body_eligible: budget.body_eligible_at_boot,
       body_bytes: body.length,
+      alwaysApply,
+      userInvocable,
     });
   }
   return skills;
 }
 
-module.exports = { loadSkills, parseFrontmatter, findSkillFiles };
+// alwaysApply: true 인 스킬만 — Layer 1 baseline 주입 후보
+function loadAlwaysApply(skillsDir, profile) {
+  return loadSkills(skillsDir, profile).filter((s) => s.alwaysApply);
+}
+
+// user-invocable: true 인 스킬만 — /plan /build 에서 라우팅 가능
+function loadUserInvocable(skillsDir, profile) {
+  return loadSkills(skillsDir, profile).filter((s) => s.userInvocable);
+}
+
+module.exports = { loadSkills, loadAlwaysApply, loadUserInvocable, parseFrontmatter, findSkillFiles };

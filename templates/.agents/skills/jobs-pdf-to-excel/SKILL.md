@@ -1,6 +1,8 @@
 ---
 name: jobs-pdf-to-excel
 description: 폴더(inbox/jobs/)에 모인 채용공고 PDF를 정해진 컬럼의 Excel로 정리합니다. Use when 사용자가 "채용공고 정리", "PDF 모아서 Excel", "공고 표로 만들어줘" 등을 말할 때.
+user-invocable: true
+alwaysApply: false
 requires:
   - common/utils/pdf-extract
   - common/utils/xlsx-write
