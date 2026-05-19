@@ -6,6 +6,26 @@
 
 const pkg = require('../package.json');
 
+// 자기검증: install.js가 같은 디렉터리에 있어야 정상
+const path = require('path');
+const fs = require('fs');
+const installJs = path.join(__dirname, 'install.js');
+if (!fs.existsSync(installJs)) {
+  process.stderr.write([
+    '',
+    '❌ jinhak-harness 설치 검증 실패',
+    `   ${installJs} 가 없습니다.`,
+    '',
+    '해결:',
+    '  npm uninstall -g jinhak-harness',
+    '  npm cache clean --force',
+    '  npm install -g github:ohilikeit/jinhak-vibecode',
+    '',
+  ].join('\n'));
+  // npm install이 실패로 표시되도록 종료. scripts.postinstall의 || true는 의도된 무해 처리.
+  process.exit(1);
+}
+
 // CI/test 환경에서는 조용히
 if (process.env.CI || process.env.JINHAK_NO_GREETING) process.exit(0);
 

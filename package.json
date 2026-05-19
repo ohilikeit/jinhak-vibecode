@@ -25,7 +25,7 @@
   "author": "jihwanyoon",
   "license": "MIT",
   "bin": {
-    "jinhak-harness": "./bin/install.js"
+    "jinhak-harness": "bin/install.js"
   },
   "files": [
     "bin/",
