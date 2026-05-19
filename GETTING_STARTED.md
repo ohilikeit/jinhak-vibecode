@@ -56,56 +56,88 @@ python3 --version       # 이미 깔려 있는지 확인
 
 ---
 
-## 2. jinhak-harness 설치 (한 줄)
+## 2. jinhak-harness 설치 (3줄)
 
-```bash
-npm install -g github:ohilikeit/jinhak-vibecode
+Windows는 사전에 PowerShell 관리자에서 한 번:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
-> 정식 npm publish 전이라 GitHub 직접 설치를 씁니다. publish가 풀리면 `npm install -g jinhak-harness` 한 줄로 바뀝니다.
+그 다음 Git Bash(또는 macOS/Linux 터미널)에서:
+```bash
+cd ~/Downloads
+git clone https://github.com/ohilikeit/jinhak-vibecode.git
+cd jinhak-vibecode && npm link
+```
 
 확인:
+```bash
+jinhak-harness --version       # → jinhak-harness v0.1.0
+```
+
+> 왜 `npm install -g` 가 아닌가: 일부 Windows 환경에서 `npm install -g github:...` 가
+> 추출 단계에서 실패하는 사례가 있어 `git clone + npm link` 를 권장합니다. 정식 npm publish 후엔
+> `npm install -g jinhak-harness` 한 줄로 바뀝니다.
+
+### 2-1. AI 도구에 슬래시 커맨드 등록 (1줄)
+
+CLI는 깔렸지만 AI 도구 채팅창의 슬래시 메뉴(`/jinhak-harness:*`)에는 아직 안 뜹니다. 한 번 더:
 
 ```bash
-jinhak-harness --version
+jinhak-harness register
+```
+
+이러면 6 호스트(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)의 user-level commands 디렉터리로 12개 슬래시 커맨드가 한 번에 복사됩니다. 적용 후 AI 도구를 **완전히 종료-재실행**하세요 (자동완성 캐시 갱신).
+
+미리 보기:
+```bash
+jinhak-harness register --dry-run
+```
+
+제거:
+```bash
+jinhak-harness unregister
 ```
 
 ---
 
 ## 3. 처음 5분 — AI 도구에서 슬래시 커맨드 쓰기
 
-설치하면 6개 AI 도구가 각자 알아서 다음 슬래시 커맨드 10개를 인식합니다.
+`register` 가 끝난 뒤 6개 AI 도구가 다음 12개 슬래시 커맨드를 모두 인식합니다 (네임스페이스 `jinhak-harness:`):
 
 ```
-/init  /doctor  /start  /plan  /build  /verify  /handoff  /ship  /create  /autopilot
+/jinhak-harness:init       /jinhak-harness:doctor     /jinhak-harness:start
+/jinhak-harness:plan       /jinhak-harness:build      /jinhak-harness:verify
+/jinhak-harness:handoff    /jinhak-harness:ship       /jinhak-harness:create
+/jinhak-harness:autopilot  /jinhak-harness:register   /jinhak-harness:unregister
 ```
 
-> 처음 쓰는 분은 그냥 **`/autopilot "<무엇을 자동화할지 한국어로>"`** 한 줄만 알면 충분합니다.
+> 처음 쓰는 분은 그냥 **`/jinhak-harness:autopilot "<무엇을 자동화할지 한국어로>"`** 한 줄만 알면 충분합니다.
 
 ### 3-1. 어떤 AI 도구를 쓰시나요?
 
-본인이 쓰는 도구에 해당하는 줄만 보세요. **공통**: 위 npm 설치 한 줄만 하면 나머지는 도구가 알아서 인식합니다.
+`register` 한 번 돌리면 6개 호스트가 자동으로 인식합니다. AI 도구를 **완전히 종료-재실행**해 자동완성 캐시를 새로 받으세요.
 
-| 도구 | 진입 방법 |
+| 도구 | 진입 |
 |---|---|
-| **Claude Code** | 그대로 채팅창에서 `/start` 타이핑 → 자동완성에 뜸 |
-| **Cursor** | 채팅창에서 `/` 입력 → `start`, `build` 등이 후보로 뜸 |
-| **Codex CLI** | `codex` 실행 후 채팅창에서 `/start` |
-| **Gemini CLI** | `gemini` 실행 후 채팅창에서 `/start` |
-| **Google Antigravity** | 채팅창에서 `/start` |
-| **OpenCode** | `opencode` 실행 후 `/start` |
+| **Claude Code** | 채팅창에서 `/jinhak-harness:` 입력 → 12개 후보 자동완성 |
+| **Cursor** | 채팅창에서 `/jinhak-harness:` 입력 |
+| **Codex CLI** | `codex` 실행 후 `/jinhak-harness:start` |
+| **Gemini CLI** | `gemini` 실행 후 `/jinhak-harness:start` |
+| **Google Antigravity** | 채팅창에서 `/jinhak-harness:start` |
+| **OpenCode** | `opencode` 실행 후 `/jinhak-harness:start` |
 
 ### 3-2. 첫 3개 커맨드 (한 번씩)
 
 AI 도구 채팅창에서 순서대로:
 
 ```
-/init       ← 홈 폴더 만들기
-/doctor     ← 환경 점검 (6 섹션 한국어 진단)
-/start      ← 5문항 직군 인터뷰
+/jinhak-harness:init       ← 홈 폴더 만들기
+/jinhak-harness:doctor     ← 환경 점검 (6 섹션 한국어 진단)
+/jinhak-harness:start      ← 5문항 직군 인터뷰
 ```
 
-`/start` 는 채팅창에서 한 문항씩 묻고 답하면 됩니다:
+`/jinhak-harness:start` 는 채팅창에서 한 문항씩 묻고 답하면 됩니다:
 
 ```
 1) 직군이 어떻게 되시나요?           예) 인사담당자
@@ -142,7 +174,7 @@ AI 도구 채팅창에서 순서대로:
 `my-jobs` 폴더를 작업 디렉터리로 열고 채팅창에서:
 
 ```
-/autopilot 이번 주 채용공고 Excel로 정리
+/jinhak-harness:autopilot 이번 주 채용공고 Excel로 정리
 ```
 
 AI가 알아서 plan → build → verify 3단계를 돌립니다:
@@ -154,14 +186,14 @@ AI가 알아서 plan → build → verify 3단계를 돌립니다:
   → output/jobs.xlsx 생성
 ━━━ 3/3 verify ━━━
   → 예상 행 수 (3)와 일치 ✅
-✅ autopilot 완료 — 다음: /handoff --to <폴더> --confirm
+✅ autopilot 완료 — 다음: /jinhak-harness:handoff --to <폴더> --confirm
 ```
 
 ### 4-4. 결과를 회사 공유 드라이브로
 
 ```
-/handoff --to ~/Documents/share/jobs              ← 미리 보기만 (실제로 안 옮김)
-/handoff --to ~/Documents/share/jobs --confirm   ← 진짜 복사
+/jinhak-harness:handoff --to ~/Documents/share/jobs              ← 미리 보기만 (실제로 안 옮김)
+/jinhak-harness:handoff --to ~/Documents/share/jobs --confirm   ← 진짜 복사
 ```
 
 **`--confirm` 없으면 안 옮겨집니다.** 실수 방지 장치입니다.
@@ -173,20 +205,20 @@ AI가 알아서 plan → build → verify 3단계를 돌립니다:
 ### A. 회의록 텍스트 → 요약 마크다운
 회의록 `.txt` 파일을 `inbox/meetings/` 에 넣고 채팅창에서:
 ```
-/build 이번 주 회의록 요약
+/jinhak-harness:build 이번 주 회의록 요약
 ```
 → `output/meeting-summary.md` (파일 안에 `날짜:`, `참석자:`, `결정:`, `액션:` 라벨이 있어야 함)
 
 ### B. 영수증 PDF → CSV
 영수증 PDF를 `inbox/receipts/` 에 넣고:
 ```
-/build 영수증 CSV 정리
+/jinhak-harness:build 영수증 CSV 정리
 ```
 → `output/expenses.csv` (Excel에서 바로 열림, 합계 행 자동 추가)
 
 ### C. 내 직군 전용 자동화 만들기
 ```
-/create
+/jinhak-harness:create
 ```
 6문항만 답하면 새 자동화 스킬이 등록됩니다 (예: 계약서 PDF → 요약 CSV, 견적서 → 비교표, 발주서 → 거래처별 집계). 코드 수정 0회.
 
@@ -196,16 +228,18 @@ AI가 알아서 plan → build → verify 3단계를 돌립니다:
 
 | 무엇 하고 싶을 때 | 슬래시 커맨드 |
 |---|---|
-| 첫 셋업 | `/init` |
-| 내 환경에 문제 없는지 점검 | `/doctor` |
-| 5문항 인터뷰 (한 번만) | `/start` |
-| 무엇을 할지 미리 보기 | `/plan <요청>` |
-| 실제 실행 | `/build <요청>` |
-| 결과 검증 | `/verify` |
-| 결과를 다른 폴더로 복사 | `/handoff --to <폴더> --confirm` |
-| **한 줄로 plan+build+verify** | **`/autopilot <요청>`** |
-| 새 자동화 만들기 | `/create` |
-| .harness git 커밋 | `/ship --confirm` |
+| 6 호스트 등록 (설치 직후 한 번) | `/jinhak-harness:register` |
+| 첫 셋업 | `/jinhak-harness:init` |
+| 내 환경에 문제 없는지 점검 | `/jinhak-harness:doctor` |
+| 5문항 인터뷰 (한 번만) | `/jinhak-harness:start` |
+| 무엇을 할지 미리 보기 | `/jinhak-harness:plan <요청>` |
+| 실제 실행 | `/jinhak-harness:build <요청>` |
+| 결과 검증 | `/jinhak-harness:verify` |
+| 결과를 다른 폴더로 복사 | `/jinhak-harness:handoff --to <폴더> --confirm` |
+| **한 줄로 plan+build+verify** | **`/jinhak-harness:autopilot <요청>`** |
+| 새 자동화 만들기 | `/jinhak-harness:create` |
+| .harness git 커밋 | `/jinhak-harness:ship --confirm` |
+| 호스트 등록 해제 | `/jinhak-harness:unregister` |
 
 ---
 
@@ -284,4 +318,4 @@ rm -rf ~/.harness                   # 모든 설정/기록 삭제 (선택)
 
 ---
 
-**한 줄 요약**: `/init → /doctor → /start → /autopilot "<요청>"`. 그 다음은 도구가 알아서 합니다. 🌱
+**한 줄 요약**: 설치 후 한 번 `jinhak-harness register`, 그 다음 AI 채팅창에서 `/jinhak-harness:init → :doctor → :start → :autopilot "<요청>"`. 🌱

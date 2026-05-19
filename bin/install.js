@@ -11,7 +11,7 @@ const pkg = require('../package.json');
 
 function emitCostLabel(cmd) {
   // 메타/진단성은 라벨 생략
-  if (['paths', 'doctor', 'ship', 'init'].includes(cmd)) {
+  if (['paths', 'doctor', 'ship', 'init', 'register', 'unregister'].includes(cmd)) {
     // doctor/ship/init은 자기 안에서 출력; paths는 정보성
     return;
   }
@@ -44,6 +44,10 @@ function printHelp() {
       '  ship [--confirm] [--push]       .harness 변경을 git commit',
       '  create                          새 자동화 스킬 SKILL.md 생성 (인터뷰)',
       '  autopilot "<요청>"              plan + build + verify 한 번에',
+      '',
+      'AI 호스트 등록:',
+      '  register [--host=H] [--dry-run]   6 AI 호스트의 user-level dir로 슬래시 커맨드 복사',
+      '  unregister [--host=H]             등록 해제',
       '',
       '진단/메타:',
       '  --version, -v                   버전 출력',
@@ -208,6 +212,13 @@ switch (cmd) {
       ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
+    process.exit(result.status ?? 1);
+    break;
+  }
+  case 'register':
+  case 'unregister': {
+    const script = path.resolve(__dirname, 'commands', 'register.js');
+    const result = spawnSync(process.execPath, [script, ...args], { stdio: 'inherit' });
     process.exit(result.status ?? 1);
     break;
   }

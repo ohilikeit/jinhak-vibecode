@@ -19,8 +19,8 @@ pass=0; fail=0
 ok() { pass=$((pass+1)); printf '✅ %s\n' "$1"; }
 ng() { fail=$((fail+1)); printf '❌ %s\n' "$1"; }
 
-EXPECTED=(init doctor start plan build verify handoff ship create autopilot)
-EXPECTED_WITH_ARGS=(plan build verify handoff ship autopilot)
+EXPECTED=(init doctor start plan build verify handoff ship create autopilot register unregister)
+EXPECTED_WITH_ARGS=(plan build verify handoff ship autopilot register unregister)
 EXPECTED_NO_ARGS=(init doctor start create)
 
 # ── 1) canonical 10개 존재 ─────────────────────────────────────
