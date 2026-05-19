@@ -1,17 +1,32 @@
-.PHONY: reset test-fresh check-env bootstrap help
+.PHONY: help reset test-fresh check-env bootstrap \
+        test-all test-hooks test-commands test-integration test-bin \
+        smoke demo
 
 # 기본 타깃 — make 만 치면 도움말
 help:
 	@echo "jinhak-harness 개발 워크플로"
 	@echo ""
-	@echo "  make bootstrap   — 첫 셋업: env 점검 + Python 도구 설치 안내"
-	@echo "  make check-env   — HARNESS_HOME/AGENTS_SKILLS_HOME export 확인"
-	@echo "  make test-fresh CMD='<명령>'  — 격리 mktemp 디렉터리에서 명령 실행"
-	@echo "  make reset       — dev-home, test-*, .venv-dev 모두 삭제 + npm unlink"
+	@echo "셋업 / 환경:"
+	@echo "  make bootstrap          — 첫 셋업: env 점검 + Python 도구 설치 안내"
+	@echo "  make check-env          — HARNESS_HOME/AGENTS_SKILLS_HOME export 확인"
+	@echo "  make reset              — dev-home, test-*, .venv-dev 모두 삭제 + npm unlink"
+	@echo ""
+	@echo "테스트:"
+	@echo "  make test-all           — 9개 테스트 스위트 모두 실행 (CI 진입점)"
+	@echo "  make test-hooks         — session-start hook 테스트만"
+	@echo "  make test-bin           — bin/profile 테스트"
+	@echo "  make test-commands      — start/verify/handoff/plan/doctor 커맨드 테스트"
+	@echo "  make test-integration   — end-to-end 통합 테스트 (jobs + meetings)"
+	@echo "  make smoke              — 빠른 무결성 체크 (version + doctor)"
+	@echo ""
+	@echo "데모/도구:"
+	@echo "  make demo               — 격리 환경에서 jobs-pdf-to-excel E2E 시연"
+	@echo "  make test-fresh CMD='<명령>'  — 임시 mktemp 디렉터리에서 명령 실행"
 	@echo ""
 	@echo "예시:"
-	@echo "  make test-fresh CMD='node bin/install.js --version'"
-	@echo "  make test-fresh CMD='jinhak-harness start'   # npm link 후"
+	@echo "  make test-all"
+	@echo "  make demo"
+	@echo "  make test-fresh CMD='node bin/install.js --help'"
 
 # 격리 디렉터리 + npm link 모두 정리
 reset:
@@ -26,6 +41,45 @@ test-fresh:
 		exit 1; \
 	fi
 	@./scripts/fresh-test.sh sh -c "$(CMD)"
+
+# ── 테스트 ────────────────────────────────────────────────
+JINHAK_PYTHON ?= $(CURDIR)/.venv-dev/bin/python3
+export JINHAK_PYTHON
+
+test-hooks:
+	@./tests/hooks/test-session-start.sh
+
+test-bin:
+	@./tests/bin/test-profile.sh
+
+test-commands:
+	@./tests/commands/test-start.sh
+	@./tests/commands/test-verify.sh
+	@./tests/commands/test-handoff.sh
+	@./tests/commands/test-plan.sh
+	@./tests/commands/test-doctor.sh
+
+test-integration:
+	@./tests/integration/test-jobs-pdf-to-excel.sh
+	@./tests/integration/test-meeting-notes-to-summary.sh
+
+test-all: test-hooks test-bin test-commands test-integration
+	@echo ""
+	@echo "🎉 전 테스트 통과 — 9 스위트, 106 assertion"
+
+# 빠른 무결성 체크 (CI 사전 게이트용)
+smoke:
+	@echo "▶ smoke: --version"
+	@node bin/install.js --version
+	@echo "▶ smoke: --help (50자 미만 줄만 표시)"
+	@node bin/install.js --help | head -5
+	@echo "▶ smoke: doctor (정상 종료 확인)"
+	@AGENTS_SKILLS_HOME=$(CURDIR)/templates/.agents/skills HARNESS_DEV=1 \
+		node bin/install.js doctor --refresh >/dev/null 2>&1 && echo "✅ doctor OK"
+
+# 격리된 환경에서 jobs-pdf-to-excel E2E 데모
+demo:
+	@./tests/integration/test-jobs-pdf-to-excel.sh
 
 # 셸 환경변수 확인 (가이드 §3 Phase 0 자가 점검)
 check-env:
@@ -64,5 +118,6 @@ bootstrap:
 	@echo ""
 	@echo "  # 셋업 검증"
 	@echo "  make check-env"
+	@echo "  make test-all"
 	@echo ""
 	@echo "==================================================="
