@@ -1,0 +1,11 @@
+{
+  "tiers": [
+    { "name": "text",   "requires": ["python3", "pdfplumber"], "tokens": "~200" },
+    { "name": "tables", "requires": ["python3", "pdfplumber"], "tokens": "~400" }
+  ],
+  "auto_install_guide": {
+    "uv":  "curl -LsSf https://astral.sh/uv/install.sh | sh && uv tool install --with pdfplumber --with openpyxl --with pandas jinhak-harness-pytools",
+    "mac": "brew install python && pip3 install --user pdfplumber openpyxl pandas",
+    "wsl": "sudo apt install python3-pdfplumber python3-openpyxl python3-pandas"
+  }
+}
