@@ -9,12 +9,12 @@
 
 ## 0. 이 도구가 뭐예요?
 
-반복되는 사무 업무(채용공고 PDF 모으기 → Excel 정리, 회의록 → 요약, 영수증 → CSV)를 **컴퓨터가 알아서 하게** 만들어 주는 한국어 도구입니다.
+반복되는 사무 업무(채용공고 PDF 모으기 → Excel 정리, 회의록 → 요약, 영수증 → CSV)를 **AI 코딩 도구의 채팅창**(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)에서 `/start`, `/build` 같은 **슬래시 커맨드** 한 줄로 돌아가게 만들어 주는 한국어 도구입니다.
 
 - 5분짜리 인터뷰만 하면 내 직군에 맞게 설정됩니다
 - 결과물은 항상 한국어로 알려줍니다
 - 회사 밖으로 데이터를 보내지 않습니다 (기본값)
-- Claude Code / Cursor / Codex / Gemini / Antigravity / OpenCode 모두에서 똑같이 동작합니다
+- **6개 AI 도구** 어디서나 동일한 슬래시 커맨드로 동작합니다
 
 ---
 
@@ -43,224 +43,208 @@
 node --version
 ```
 
-`v18.x.x` 또는 그 이상이 나오면 OK. (예: `v22.11.0`)
-
-> ⚠️ `command not found` 라고 나오면 Node.js 설치가 안 된 것입니다. 다시 1-1로.
+`v18.x.x` 또는 그 이상이 나오면 OK.
 
 ### 1-2. Python 설치 (PDF·Excel을 다루실 거면 필요)
 
 영수증/채용공고 같은 **PDF**를 자동화하려면 Python이 필요합니다. 텍스트 회의록만 쓸 거면 건너뛰어도 됩니다.
 
-#### macOS
 ```bash
-# macOS는 보통 Python이 이미 깔려 있어요. 확인:
-python3 --version
+python3 --version       # 이미 깔려 있는지 확인
 ```
-없다면 https://www.python.org/downloads/ 에서 최신 LTS 설치.
-
-#### Windows
-1. https://www.python.org/downloads/ → 큰 노란 버튼 클릭
-2. **반드시** 설치 첫 화면에서 `Add Python to PATH` 체크박스 켜기
-3. "Install Now" 클릭
+없다면 https://www.python.org/downloads/ → Windows라면 설치 첫 화면에서 **`Add Python to PATH` 체크박스 켜기**.
 
 ---
 
 ## 2. jinhak-harness 설치 (한 줄)
 
-터미널(PowerShell)을 열고 **딱 한 줄** 복사-붙여넣기:
-
 ```bash
 npm install -g github:ohilikeit/jinhak-vibecode
 ```
 
-> **왜 `npm install -g jinhak-harness`는 안 되나요?**
-> 아직 공식 npm 저장소에 올리지 않은 단계입니다. GitHub에서 직접 받아오는 위 명령으로 동일하게 동작합니다. 정식 등록 후엔 `npm install -g jinhak-harness` 한 줄로 바뀝니다.
+> 정식 npm publish 전이라 GitHub 직접 설치를 씁니다. publish가 풀리면 `npm install -g jinhak-harness` 한 줄로 바뀝니다.
 
-설치가 끝나면 환영 메시지가 한국어로 뜹니다. 확인:
+확인:
 
 ```bash
 jinhak-harness --version
 ```
 
-`0.1.0` 같은 숫자가 보이면 성공.
+---
 
-### 막혔을 때
+## 3. 처음 5분 — AI 도구에서 슬래시 커맨드 쓰기
 
-| 에러 메시지 | 해결 |
+설치하면 6개 AI 도구가 각자 알아서 다음 슬래시 커맨드 10개를 인식합니다.
+
+```
+/init  /doctor  /start  /plan  /build  /verify  /handoff  /ship  /create  /autopilot
+```
+
+> 처음 쓰는 분은 그냥 **`/autopilot "<무엇을 자동화할지 한국어로>"`** 한 줄만 알면 충분합니다.
+
+### 3-1. 어떤 AI 도구를 쓰시나요?
+
+본인이 쓰는 도구에 해당하는 줄만 보세요. **공통**: 위 npm 설치 한 줄만 하면 나머지는 도구가 알아서 인식합니다.
+
+| 도구 | 진입 방법 |
 |---|---|
-| `EACCES: permission denied` | macOS/Linux면 앞에 `sudo` 붙이기 → `sudo npm install -g github:ohilikeit/jinhak-vibecode` |
-| `command not found: npm` | Node.js 설치 (1-1)부터 다시 |
-| `command not found: jinhak-harness` (설치는 됐는데) | 터미널을 완전히 닫고 새로 열어보세요 |
+| **Claude Code** | 그대로 채팅창에서 `/start` 타이핑 → 자동완성에 뜸 |
+| **Cursor** | 채팅창에서 `/` 입력 → `start`, `build` 등이 후보로 뜸 |
+| **Codex CLI** | `codex` 실행 후 채팅창에서 `/start` |
+| **Gemini CLI** | `gemini` 실행 후 채팅창에서 `/start` |
+| **Google Antigravity** | 채팅창에서 `/start` |
+| **OpenCode** | `opencode` 실행 후 `/start` |
+
+### 3-2. 첫 3개 커맨드 (한 번씩)
+
+AI 도구 채팅창에서 순서대로:
+
+```
+/init       ← 홈 폴더 만들기
+/doctor     ← 환경 점검 (6 섹션 한국어 진단)
+/start      ← 5문항 직군 인터뷰
+```
+
+`/start` 는 채팅창에서 한 문항씩 묻고 답하면 됩니다:
+
+```
+1) 직군이 어떻게 되시나요?           예) 인사담당자
+2) 자주 반복하는 업무를 한 줄로?     예) 매주 채용공고 정리
+3) 결과물은 어떤 형태?              예) Excel
+4) 회사 글말투는?                  예) 격식체
+5) 자주 쓰는 도구를 쉼표로?         예) Excel, Notion, Slack
+```
+
+답한 내용이 자동으로 8 행동 차원(상세도·속도·검증 강도 등)으로 추론되어 `~/.harness/user-profile.md` 에 저장됩니다.
 
 ---
 
-## 3. 처음 5분 — 첫 셋업
-
-터미널에서 순서대로:
-
-### 3-1. 홈 폴더 만들기 (저장 공간)
-
-```bash
-jinhak-harness init
-```
-
-→ `~/.harness/` 라는 폴더가 생기고 거기에 모든 설정·기록이 저장됩니다. 이걸 지워도 다시 `init` 하면 새로 만들어집니다.
-
-### 3-2. 환경 점검
-
-```bash
-jinhak-harness doctor
-```
-
-화면에 6개 섹션이 한국어로 뜹니다:
-- 환경 / 프로필 / 의존성 / 스킬 카탈로그 / 메모리 / 최근 활동
-
-빨간 `❌` 가 보이면 그 줄의 안내대로 따라 하세요. (대부분 Python 라이브러리 설치 명령을 알려줍니다.)
-
-### 3-3. 5문항 인터뷰
-
-```bash
-jinhak-harness start
-```
-
-질문 5개가 한국어로 차례로 나옵니다:
-
-```
-1) 직군이 어떻게 되시나요?            예: 인사담당자
-2) 자주 반복하는 업무를 한 줄로 알려주세요  예: 매주 채용공고 모아서 표 만들기
-3) 결과물은 어떤 형태인가요?            예: Excel
-4) 회사 글말투는?                     예: 격식체
-5) 자주 쓰는 도구를 쉼표로 알려주세요    예: Excel, Notion, Slack
-```
-
-답하면 자동으로 8가지 행동 특성(상세도·속도·검증 강도 등)을 추론해 저장합니다. **딱 한 번만** 답하면 끝, 다음부터는 알아서 적용됩니다.
-
----
-
-## 4. 첫 자동화 따라 하기 — "채용공고 PDF 3개를 Excel 한 장으로"
+## 4. 첫 자동화 따라 하기 — "채용공고 PDF 3개 → Excel 한 장"
 
 ### 4-1. 작업 폴더 준비
 
-데스크탑에 폴더를 하나 만들고 그 안에 다음 3개 폴더를 만드세요:
+데스크탑에 폴더 하나 만들고 그 안에:
 
 ```
 ~/Desktop/my-jobs/
-  ├── inbox/jobs/      ← 채용공고 PDF를 여기에 넣을 거예요
+  ├── inbox/jobs/      ← 채용공고 PDF 여기에 넣기
   ├── assets/          ← 회사 표준 Excel 양식
-  └── output/          ← 결과물이 여기로 나옵니다
+  └── output/          ← 결과물이 여기로 나옴
 ```
 
-터미널에서 한 번에:
+### 4-2. 회사 양식 + PDF 넣기
 
-```bash
-mkdir -p ~/Desktop/my-jobs/inbox/jobs ~/Desktop/my-jobs/assets ~/Desktop/my-jobs/output
-cd ~/Desktop/my-jobs
+1. `assets/template.xlsx` 에 회사 표준 양식(헤더 5컬럼: 공고제목 / 회사명 / 직무 / 근무지 / 마감일)
+2. `inbox/jobs/` 에 채용공고 PDF 3개 드래그-드롭
+
+### 4-3. AI 도구 채팅창에 한 줄
+
+`my-jobs` 폴더를 작업 디렉터리로 열고 채팅창에서:
+
+```
+/autopilot 이번 주 채용공고 Excel로 정리
 ```
 
-### 4-2. 채용공고 PDF·Excel 양식 넣기
-
-1. 회사가 쓰는 Excel 양식(헤더: 공고제목 / 회사명 / 직무 / 근무지 / 마감일)을 `assets/template.xlsx` 로 복사
-2. 모은 채용공고 PDF 3개를 `inbox/jobs/` 폴더에 드래그-드롭
-
-### 4-3. 한 번에 실행
-
-```bash
-jinhak-harness autopilot "이번 주 채용공고 Excel로 정리"
-```
-
-화면에 단계가 줄줄이 표시됩니다:
+AI가 알아서 plan → build → verify 3단계를 돌립니다:
 
 ```
 ━━━ 1/3 plan ━━━
-  → 어떤 스킬을 쓸지 결정 중... jobs-pdf-to-excel
+  → 라우팅: jobs-pdf-to-excel
 ━━━ 2/3 build ━━━
-  → PDF에서 회사명/직무/근무지/마감일 추출 중...
   → output/jobs.xlsx 생성
 ━━━ 3/3 verify ━━━
   → 예상 행 수 (3)와 일치 ✅
-✅ autopilot 완료
+✅ autopilot 완료 — 다음: /handoff --to <폴더> --confirm
 ```
 
-`output/jobs.xlsx` 를 열어보세요. 회사명·직무·근무지·마감일이 채워진 표가 만들어져 있습니다.
+### 4-4. 결과를 회사 공유 드라이브로
 
-### 4-4. 결과를 공유 폴더로 옮기기
-
-```bash
-# 1) 옮길 곳 미리 보기 (실제로는 안 옮김)
-jinhak-harness handoff --to ~/Documents/shared-jobs
-
-# 2) 진짜 옮기기
-jinhak-harness handoff --to ~/Documents/shared-jobs --confirm
+```
+/handoff --to ~/Documents/share/jobs              ← 미리 보기만 (실제로 안 옮김)
+/handoff --to ~/Documents/share/jobs --confirm   ← 진짜 복사
 ```
 
-> **--confirm 없으면 안 옮겨집니다.** 실수 방지 장치입니다.
+**`--confirm` 없으면 안 옮겨집니다.** 실수 방지 장치입니다.
 
 ---
 
 ## 5. 다음에 시도할 수 있는 자동화
 
 ### A. 회의록 텍스트 → 요약 마크다운
-회의록 `.txt` 파일을 `inbox/meetings/` 에 넣고:
-```bash
-jinhak-harness build "이번 주 회의록 요약"
-# → output/meeting-summary.md
+회의록 `.txt` 파일을 `inbox/meetings/` 에 넣고 채팅창에서:
 ```
-(파일 안에 `날짜:`, `참석자:`, `결정:`, `액션:` 라벨이 있어야 합니다)
+/build 이번 주 회의록 요약
+```
+→ `output/meeting-summary.md` (파일 안에 `날짜:`, `참석자:`, `결정:`, `액션:` 라벨이 있어야 함)
 
 ### B. 영수증 PDF → CSV
 영수증 PDF를 `inbox/receipts/` 에 넣고:
-```bash
-jinhak-harness build "영수증 CSV 정리"
-# → output/expenses.csv (Excel에서 바로 열림, 합계 행 자동 추가)
 ```
+/build 영수증 CSV 정리
+```
+→ `output/expenses.csv` (Excel에서 바로 열림, 합계 행 자동 추가)
 
-### C. 내 직군 전용 자동화 만들기 (인터뷰 6문항)
-```bash
-jinhak-harness create
+### C. 내 직군 전용 자동화 만들기
 ```
-6문항만 답하면 새 자동화 스킬이 등록됩니다. 예시:
-- 계약서 PDF → 요약 CSV
-- 견적서 PDF → 비교표
-- 발주서 → 거래처별 집계
+/create
+```
+6문항만 답하면 새 자동화 스킬이 등록됩니다 (예: 계약서 PDF → 요약 CSV, 견적서 → 비교표, 발주서 → 거래처별 집계). 코드 수정 0회.
 
 ---
 
-## 6. 명령어 빠른 참조표 (외울 필요 없음, 자주 보세요)
+## 6. 슬래시 커맨드 빠른 참조표 (외울 필요 없음)
 
-| 무엇 하고 싶을 때 | 명령 |
+| 무엇 하고 싶을 때 | 슬래시 커맨드 |
 |---|---|
-| 첫 셋업 | `jinhak-harness init` |
-| 내 환경에 문제 없는지 점검 | `jinhak-harness doctor` |
-| 5문항 인터뷰 (한 번만) | `jinhak-harness start` |
-| 무엇을 할지 미리 보기 | `jinhak-harness plan "<요청>"` |
-| 실제 실행 | `jinhak-harness build "<요청>"` |
-| 결과 검증 | `jinhak-harness verify` |
-| 결과를 다른 폴더로 복사 | `jinhak-harness handoff --to <폴더> --confirm` |
-| 한 줄로 plan+build+verify | `jinhak-harness autopilot "<요청>"` |
-| 새 자동화 만들기 | `jinhak-harness create` |
-| 명령어 전체 보기 | `jinhak-harness --help` |
+| 첫 셋업 | `/init` |
+| 내 환경에 문제 없는지 점검 | `/doctor` |
+| 5문항 인터뷰 (한 번만) | `/start` |
+| 무엇을 할지 미리 보기 | `/plan <요청>` |
+| 실제 실행 | `/build <요청>` |
+| 결과 검증 | `/verify` |
+| 결과를 다른 폴더로 복사 | `/handoff --to <폴더> --confirm` |
+| **한 줄로 plan+build+verify** | **`/autopilot <요청>`** |
+| 새 자동화 만들기 | `/create` |
+| .harness git 커밋 | `/ship --confirm` |
 
 ---
 
-## 7. 자주 묻는 질문
+## 7. AI 도구가 슬래시 커맨드를 어떻게 인식하나요? (호스트별 차이)
+
+여러분이 신경 쓰지 않아도 되는 내부 차이지만, 회사 보안 팀이 물으면 답할 수 있도록:
+
+| 도구 | 슬래시 커맨드 형식 | 자동 인식 경로 |
+|---|---|---|
+| Claude Code | Markdown + frontmatter | `commands/<name>.md` (플러그인 루트) |
+| Cursor | Markdown (frontmatter 없음) | `.cursor/commands/<name>.md` |
+| Codex CLI | Markdown + frontmatter | `commands/<name>.md` 또는 `~/.codex/prompts/` |
+| Gemini CLI | **TOML** (별도 형식) | `.gemini/commands/<name>.toml` |
+| Antigravity | Skill 기반 | `commands/<name>.md` + SKILL.md |
+| OpenCode | Markdown + frontmatter | `commands/<name>.md` |
+
+이 도구는 **canonical `commands/<name>.md` 하나만 작성**하고, `scripts/gen-commands.mjs` 가 Cursor·Gemini용 변환본을 자동 생성합니다. 사용자는 신경 쓸 필요가 없습니다.
+
+---
+
+## 8. 자주 묻는 질문
 
 **Q. 내 PDF 파일이 회사 밖으로 나가나요?**
-A. 안 나갑니다. 기본 프로필(`eco`)은 외부 전송이 모두 차단되어 있고, 모든 처리는 내 컴퓨터 안에서만 일어납니다.
+A. 안 나갑니다. 기본 프로필(`eco`)은 외부 전송이 차단되어 있고, 모든 처리는 내 컴퓨터 안에서만 일어납니다.
 
 **Q. AI한테 돈 내야 하나요?**
 A. 기본 프로필은 LLM 호출이 0회입니다. PDF·Excel 처리만 합니다. 추가 비용 없음.
 
+**Q. 슬래시 커맨드가 자동완성에 안 떠요.**
+A. AI 도구를 한 번 완전히 종료 후 재실행하세요. 그래도 안 뜨면 `/doctor` 를 실행해 진단 리포트를 확인.
+
 **Q. 실수로 결과가 이상하면 되돌릴 수 있나요?**
-A. `output/` 안의 파일은 다시 만들면 덮어쓰여집니다. 원본 PDF는 `inbox/` 안에 그대로 있어요. `~/.harness/memory/decisions.jsonl` 에 모든 결정 기록이 남습니다.
+A. `output/` 안의 파일은 다시 만들면 덮어쓰여집니다. 원본 PDF는 `inbox/` 에 그대로. `~/.harness/memory/decisions.jsonl` 에 모든 결정 기록이 남습니다.
 
 **Q. 회사 PC를 바꿔도 설정이 유지되나요?**
-A. `~/.harness/` 폴더만 복사해 가시면 됩니다. (또는 새 PC에서 `start` 다시 한 번)
+A. `~/.harness/` 폴더만 복사해 가시면 됩니다. 또는 새 PC에서 `/start` 다시 한 번.
 
 **Q. PDF 추출이 잘 안 돼요. 글자가 비어요.**
-A. PDF가 **이미지 스캔본**이면 글자가 안 잡힙니다. OCR이 된 텍스트형 PDF여야 합니다. `verify` 가 어느 줄이 비었는지 한국어로 알려줍니다.
-
-**Q. 다른 AI 도구(Cursor, Gemini)에서도 같은 게 되나요?**
-A. 네. 이 도구는 6개 AI 호스트(Claude Code · Cursor · Codex CLI · Gemini CLI · Google Antigravity · OpenCode)에서 동일하게 동작하도록 설계돼 있습니다. 각 호스트가 알아서 인식합니다.
+A. PDF가 **이미지 스캔본**이면 글자가 안 잡힙니다. OCR이 된 텍스트형 PDF여야 합니다. `/verify` 가 어느 줄이 비었는지 한국어로 알려줍니다.
 
 **Q. 삭제하고 싶어요.**
 A.
@@ -271,12 +255,33 @@ rm -rf ~/.harness                   # 모든 설정/기록 삭제 (선택)
 
 ---
 
-## 8. 막혔을 때 / 도움 요청
+## 9. 막혔을 때 / 도움 요청
 
 - 친절한 한국어 에러 메시지가 어디가 문제인지 알려줍니다 (LLM 호출 없이도)
-- 그래도 해결 안 되면: `jinhak-harness doctor` 결과를 캡처해서 https://github.com/ohilikeit/jinhak-vibecode/issues 에 올려주세요
+- 그래도 해결 안 되면: `/doctor` 결과를 캡처해서 https://github.com/ohilikeit/jinhak-vibecode/issues 에 올려주세요
 - 또는 회사 IT 담당자에게 이 문서를 함께 전달해 주세요
 
 ---
 
-**한 줄 요약**: `설치 → init → doctor → start → autopilot "<요청>"`. 그 다음은 도구가 알아서 합니다. 🌱
+## 부록 A — CLI로도 쓰고 싶다면 (스크립트·CI 친화)
+
+슬래시 커맨드 외에 터미널에서 같은 명령을 직접 호출할 수 있습니다. **결과는 동일**합니다.
+
+| 슬래시 커맨드 | 동등 CLI 명령 |
+|---|---|
+| `/init` | `jinhak-harness init` |
+| `/doctor` | `jinhak-harness doctor [--refresh]` |
+| `/start` | `jinhak-harness start` |
+| `/plan <요청>` | `jinhak-harness plan "<요청>"` |
+| `/build <요청>` | `jinhak-harness build "<요청>"` |
+| `/verify` | `jinhak-harness verify [--expected-rows N]` |
+| `/handoff` | `jinhak-harness handoff --to <폴더> [--confirm]` |
+| `/ship` | `jinhak-harness ship [--confirm] [--push]` |
+| `/create` | `jinhak-harness create` |
+| `/autopilot <요청>` | `jinhak-harness autopilot "<요청>"` |
+
+배치 자동화나 cron 작업에 유용합니다. 슬래시 커맨드와 CLI는 **동일한 백엔드**(bin/install.js)를 호출하므로 결과가 100% 일치합니다.
+
+---
+
+**한 줄 요약**: `/init → /doctor → /start → /autopilot "<요청>"`. 그 다음은 도구가 알아서 합니다. 🌱

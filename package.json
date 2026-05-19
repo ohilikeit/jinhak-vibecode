@@ -31,10 +31,14 @@
     "bin/",
     "templates/",
     "hooks/",
+    "commands/",
+    "scripts/gen-commands.mjs",
     ".claude-plugin/",
     ".cursor-plugin/",
+    ".cursor/",
     ".codex-plugin/",
     ".antigravity/",
+    ".gemini/",
     ".opencode/",
     "gemini-extension.json",
     "README.md",
@@ -48,6 +52,7 @@
   },
   "scripts": {
     "version:print": "node bin/install.js --version",
+    "gen:commands": "node scripts/gen-commands.mjs",
     "test": "make test-all",
     "postinstall": "node bin/postinstall.js || true"
   },

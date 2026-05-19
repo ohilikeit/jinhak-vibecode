@@ -9,6 +9,7 @@
   },
   "skills_path": ".agents/skills",
   "rules_path": ".cursor/rules",
+  "commands_path": ".cursor/commands",
   "entry": "bin/install.js",
   "engines": {
     "cursor": ">=0.40.0"

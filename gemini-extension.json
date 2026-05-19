@@ -8,5 +8,5 @@
     "on_session_start": "hooks/session-start"
   },
   "entry_point": "bin/install.js",
-  "commands": ["doctor", "start", "plan", "build", "verify", "handoff", "ship", "create"]
+  "commands_dir": ".gemini/commands"
 }

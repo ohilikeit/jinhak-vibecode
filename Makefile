@@ -66,6 +66,7 @@ test-commands:
 	@./tests/commands/test-doctor.sh
 	@./tests/commands/test-ship.sh
 	@./tests/commands/test-create.sh
+	@./tests/commands/test-slash-commands.sh
 
 test-integration:
 	@./tests/integration/test-jobs-pdf-to-excel.sh
@@ -76,7 +77,11 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 20 스위트, 281 assertion"
+	@echo "🎉 전 테스트 통과 — 21 스위트, 슬래시 커맨드 진입점 포함"
+
+# 슬래시 커맨드 derive — canonical commands/*.md 변경 후 호출
+gen-commands:
+	@node scripts/gen-commands.mjs
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

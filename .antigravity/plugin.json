@@ -7,5 +7,6 @@
     "session-start": "hooks/session-start"
   },
   "bin": "bin/install.js",
+  "commands_path": "commands",
   "agentskill_format": "v1"
 }

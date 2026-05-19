@@ -1,0 +1,15 @@
+# /init — 홈 디렉터리 초기화
+
+사용자의 `~/.harness/` 폴더를 생성하고 user-skills, memory, agents/skills 하위 구조를 만듭니다. **첫 설치 직후 한 번만** 실행하면 됩니다.
+
+## 실행
+
+```bash
+jinhak-harness init
+```
+
+성공 시 한국어로 생성된 경로를 안내합니다. 이미 존재하면 무해하게 종료합니다 (idempotent).
+
+## 다음 단계
+
+`/doctor` 로 환경을 점검하고, `/start` 로 5문항 직군 인터뷰를 진행하세요.

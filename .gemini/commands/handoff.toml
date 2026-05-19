@@ -1,0 +1,40 @@
+# Auto-generated from commands/handoff.md — do not edit.
+description = "산출물을 다른 폴더로 복사 — dry-run이 기본, --confirm 있어야 실제 복사"
+prompt = """
+# /handoff — 외부 폴더로 복사
+
+`output/` 의 결과물을 회사 공유 드라이브 등 외부 폴더로 복사합니다. **기본은 dry-run**(미리 보기만), `--confirm` 플래그가 있어야 실제로 복사됩니다.
+
+## 실행 패턴
+
+미리 보기 (실제로 안 옮김):
+
+```bash
+jinhak-harness handoff --to ~/Documents/share/jobs
+```
+
+실제 복사:
+
+```bash
+jinhak-harness handoff --to ~/Documents/share/jobs --confirm
+```
+
+라벨로 logs/handoffs/*.log 에 기록(감사 추적):
+
+```bash
+jinhak-harness handoff --to ~/Documents/share/jobs --label "주간 채용공고" --confirm
+```
+
+`$ARGUMENTS` 를 그대로 전달:
+
+```bash
+jinhak-harness handoff $ARGUMENTS
+```
+
+`--to` 가 빠지면 사용법(exit 2). 사용자에게 "어디로 복사할까요?" 라고 물어 인자를 받으세요.
+
+## 외부 전송은?
+
+이 명령은 **로컬 파일 복사**만 합니다. Slack/Gmail 등 외부 전송은 v0.2+ 외부 도구 통합 단계에서 추가됩니다.
+
+"""

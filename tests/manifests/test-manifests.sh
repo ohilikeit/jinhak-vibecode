@@ -45,5 +45,26 @@ cursor_hook=$(python3 -c "import json; print(json.load(open('$ROOT/.cursor-plugi
 gemini_hook=$(python3 -c "import json; print(json.load(open('$ROOT/gemini-extension.json', encoding='utf-8')).get('hooks', {}).get('on_session_start', ''))")
 [ "$gemini_hook" = "hooks/session-start" ] && ok "Gemini: hooks.on_session_start" || ng "Gemini hook key"
 
+# 각 호스트 manifest가 commands 위치를 호스트별 key로 선언했는가
+claude_cmds=$(python3 -c "import json; print(json.load(open('$ROOT/.claude-plugin/plugin.json', encoding='utf-8')).get('commands_dir', ''))")
+[ "$claude_cmds" = "commands" ] && ok "Claude: commands_dir=commands" || ng "Claude commands_dir=$claude_cmds"
+
+cursor_cmds=$(python3 -c "import json; print(json.load(open('$ROOT/.cursor-plugin/plugin.json', encoding='utf-8')).get('commands_path', ''))")
+[ "$cursor_cmds" = ".cursor/commands" ] && ok "Cursor: commands_path=.cursor/commands" || ng "Cursor commands_path=$cursor_cmds"
+
+codex_cmds=$(python3 -c "import json; print(json.load(open('$ROOT/.codex-plugin/plugin.json', encoding='utf-8')).get('commands_dir', ''))")
+[ "$codex_cmds" = "commands" ] && ok "Codex: commands_dir=commands" || ng "Codex commands_dir=$codex_cmds"
+
+gemini_cmds=$(python3 -c "import json; print(json.load(open('$ROOT/gemini-extension.json', encoding='utf-8')).get('commands_dir', ''))")
+[ "$gemini_cmds" = ".gemini/commands" ] && ok "Gemini: commands_dir=.gemini/commands" || ng "Gemini commands_dir=$gemini_cmds"
+
+ag_cmds=$(python3 -c "import json; print(json.load(open('$ROOT/.antigravity/plugin.json', encoding='utf-8')).get('commands_path', ''))")
+[ "$ag_cmds" = "commands" ] && ok "Antigravity: commands_path=commands" || ng "Antigravity commands_path=$ag_cmds"
+
+# 실제 파생 산출물 존재 여부
+[ -d "$ROOT/commands" ] && ok "commands/ 디렉터리 존재 (canonical)" || ng "commands/ 누락"
+[ -d "$ROOT/.cursor/commands" ] && ok ".cursor/commands/ 디렉터리 존재 (derived)" || ng ".cursor/commands/ 누락"
+[ -d "$ROOT/.gemini/commands" ] && ok ".gemini/commands/ 디렉터리 존재 (derived)" || ng ".gemini/commands/ 누락"
+
 printf '\n결과: %d 통과 / %d 실패\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

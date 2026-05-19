@@ -7,5 +7,7 @@
     "session-start": "hooks/session-start"
   },
   "skills_dir": ".agents/skills",
+  "commands_dir": "commands",
+  "prompts_dir": "commands",
   "entry": "bin/install.js"
 }

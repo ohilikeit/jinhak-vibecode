@@ -1,0 +1,26 @@
+---
+description: 요청 분석 + 어떤 스킬이 호출될지 미리 보기 (.harness/plans/*.md 저장)
+argument-hint: "<요청 문장>"
+allowed-tools:
+  - Bash
+---
+
+# /plan — 실행 전 계획
+
+사용자 요청을 분석해 어느 자동화 스킬이 호출될지 결정하고, 그 추론 과정을 `.harness/plans/<timestamp>-<slug>.md` 에 저장합니다. **build 전에 한 번 호출**해 라우팅을 확인하는 용도.
+
+## 실행
+
+```bash
+jinhak-harness plan "$ARGUMENTS"
+```
+
+`$ARGUMENTS`가 비어 있으면 사용법(exit 2)을 출력합니다. 사용자에게 "어떤 작업을 자동화하고 싶으신가요?" 라고 물어 인자를 받으세요.
+
+## 산출
+
+- 어느 스킬에 매칭되었는지 (예: `jobs-pdf-to-excel`)
+- 매칭 키워드
+- `.harness/plans/...md` 경로
+
+매칭이 안 되면 `/create` 로 새 스킬을 만들 수 있다고 안내합니다.

@@ -8,9 +8,7 @@
     "session-start": "hooks/session-start"
   },
   "skills_dir": ".agents/skills",
-  "commands": [
-    "doctor", "start", "plan", "build", "verify", "handoff", "ship", "create"
-  ],
+  "commands_dir": "commands",
   "entry": "bin/install.js",
   "engines": {
     "claude-code": ">=2.1.139"

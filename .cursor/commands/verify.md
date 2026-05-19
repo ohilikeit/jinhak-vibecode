@@ -1,0 +1,28 @@
+# /verify — 산출물 검증
+
+`output/` 에 가장 최근 생성된 파일(.xlsx/.csv/.md)을 자동 발견해 한국어 리포트로 검증합니다.
+
+## 실행
+
+인자가 없을 때:
+
+```bash
+jinhak-harness verify
+```
+
+기대 행 수를 알고 있을 때(권장):
+
+```bash
+jinhak-harness verify --expected-rows 3
+```
+
+`$ARGUMENTS` 에 `--expected-rows N` 패턴이 있으면 그대로 전달, 없으면 인자 없이 호출.
+
+## 리포트 내용
+
+- 파일명·행 수·예상 행 수와의 일치 여부
+- 빈 셀의 위치 (행/열)
+- 합계 행 자동 검출 (CSV)
+- 의심되는 헤더 미스매치
+
+전부 LLM 호출 없이 결정론적으로 동작합니다.
