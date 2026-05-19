@@ -59,8 +59,8 @@ else
   ng "plan 파일 누락"
 fi
 
-# B. 매칭 안 되는 요청
-run_capture node "$INSTALL" plan "회의록을 PPT로 자동 변환해줘"
+# B. 매칭 안 되는 요청 (현재 카탈로그의 어떤 키워드도 포함하지 않음)
+run_capture node "$INSTALL" plan "이메일 답장 자동 생성"
 printf '\n--- B. 미매칭 요청 ---\n%s\n(exit %d)\n' "$OUT" "$RC"
 [ "$RC" -eq 1 ] && ok "미매칭 시 exit 1" || ng "미매칭 exit=$RC"
 case "$OUT" in

@@ -27,11 +27,15 @@ const SKILLS_ROOT = process.env.AGENTS_SKILLS_HOME
   ? process.env.AGENTS_SKILLS_HOME
   : path.join(REPO_ROOT, "templates", ".agents", "skills");
 
-// 키워드 → 스킬 매핑 (MVP eco — 하드코딩)
+// 키워드 → 스킬 매핑 (MVP eco — 하드코딩, build.ts의 RULES와 동기)
 const KEYWORD_RULES: { keywords: string[]; skill: string }[] = [
   {
-    keywords: ["채용공고", "PDF", "Excel", "공고", "스프레드시트", "엑셀"],
+    keywords: ["채용공고", "공고", "PDF", "Excel", "엑셀", "스프레드시트"],
     skill: "jobs-pdf-to-excel",
+  },
+  {
+    keywords: ["회의록", "회의 요약", "회의", "액션 아이템", "액션아이템"],
+    skill: "meeting-notes-to-summary",
   },
 ];
 
