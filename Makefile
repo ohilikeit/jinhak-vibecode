@@ -63,6 +63,7 @@ test-commands:
 	@./tests/commands/test-plan.sh
 	@./tests/commands/test-doctor.sh
 	@./tests/commands/test-ship.sh
+	@./tests/commands/test-create.sh
 
 test-integration:
 	@./tests/integration/test-jobs-pdf-to-excel.sh
@@ -71,7 +72,7 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 15 스위트, 197 assertion"
+	@echo "🎉 전 테스트 통과 — 16 스위트, 217 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:
