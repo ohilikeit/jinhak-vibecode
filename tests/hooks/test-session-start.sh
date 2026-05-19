@@ -65,6 +65,27 @@ else
   ng "컨텍스트가 500토큰 초과: ${ctx_chars}자 ≈ ${ctx_tokens}토큰"
 fi
 
+# 5b) alwaysApply: true baseline 본문이 동적으로 합성되는가
+out=$(bash "$HOOK")
+case "$out" in
+  *'baseline (alwaysApply)'*) ok "baseline 본문 동적 합성" ;;
+  *) ng "baseline 미합성" ;;
+esac
+case "$out" in
+  *'한국어 우선'*'Dry-run 강제'*) ok "baseline 정책 내용 포함" ;;
+  *) ng "baseline 정책 누락" ;;
+esac
+
+# 5c) baseline 파일이 없는 환경에서도 정상 동작 (회귀 보호)
+out_no_baseline=$(env -u AGENTS_SKILLS_HOME HARNESS_HOME=/nonexistent bash -c "
+  cd /tmp
+  bash '$HOOK'
+")
+case "$out_no_baseline" in
+  *'jinhak-harness'*) ok "baseline 없어도 정적 컨텍스트는 항상 출력" ;;
+  *) ng "baseline 없을 때 hook 깨짐: $out_no_baseline" ;;
+esac
+
 # 6) 5종 escape 패턴 모두 존재
 escape_count=0
 grep -qF '${s//\\/\\\\}'    "$HOOK" && escape_count=$((escape_count + 1)) && note "backslash escape ✓"

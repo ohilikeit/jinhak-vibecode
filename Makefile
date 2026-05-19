@@ -76,7 +76,7 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 20 스위트, 278 assertion"
+	@echo "🎉 전 테스트 통과 — 20 스위트, 281 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

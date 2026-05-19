@@ -17,9 +17,37 @@ read -r -d '' s <<'CTX' || true
 - 기본 프로필=eco · Dry-run 강제 · 외부 전송/삭제는 명시 승인 필요
 - 첫 실행이면 `/start`로 5분 직군 인터뷰부터 진행하세요
 
-커맨드: /start /plan /build /autopilot /verify /ship /handoff
+커맨드: /start /plan /build /autopilot /verify /ship /handoff /create /init /doctor
 환경: HARNESS_HOME, AGENTS_SKILLS_HOME 로 데이터 위치 제어 (HARNESS_DEV=1 이면 dev-home 사용)
 CTX
+
+# ----------------------------------------------------------------------
+# alwaysApply: true 스킬(baseline) 본문 동적 합성 — 청사진 Layer 1 + Karpathy 시맨틱.
+# baseline SKILL.md 위치를 우선순위대로 탐색하고, frontmatter를 제거한 본문 일부를
+# 부트스트랩 컨텍스트에 합성. 합성 후에도 500토큰(~2000자) 한도를 넘지 않도록 cap.
+# ----------------------------------------------------------------------
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+BASELINE_CANDIDATES=(
+  "${AGENTS_SKILLS_HOME:-}/baseline/SKILL.md"
+  "${HOOK_DIR}/../templates/.agents/skills/baseline/SKILL.md"
+  "${HARNESS_HOME:-$HOME/.harness}/agents/skills/baseline/SKILL.md"
+)
+for candidate in "${BASELINE_CANDIDATES[@]}"; do
+  [ -z "$candidate" ] && continue
+  if [ -f "$candidate" ]; then
+    # frontmatter 제거: 첫 `---` 줄 ~ 둘째 `---` 줄 사이 스킵, 그 이후 본문
+    body=$(awk '/^---$/{c++; next} c==2{print}' "$candidate")
+    if [ -n "$body" ]; then
+      # 본문 앞 ~800자만 사용 (전체 컨텍스트 cap 보호)
+      body=$(printf '%s' "$body" | head -c 800)
+      s="$s
+
+--- baseline (alwaysApply) ---
+$body"
+    fi
+    break
+  fi
+done
 
 # ----------------------------------------------------------------------
 # REPORT_06 §3.5 — 5종 escape 패턴 (순서 중요: 백슬래시 → 따옴표 → 제어문자)
