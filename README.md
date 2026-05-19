@@ -205,9 +205,9 @@ skill-name/
 
 대다수 사용자가 월 3만원 구독으로 4시간당 토큰 한도가 있는 환경을 가정한다. 따라서 **MVP 기본 프로필은 `eco`** 이며, 토큰을 많이 쓰는 검증·벤치마크·캡처는 **옵트인**으로 분리한다.
 
-| 단계 | 프로필 | 포함 기능 |
-| --- | --- | --- |
-| **MVP** | `eco` (기본) | 온보딩 인터뷰 → `.agents/skills/<name>/SKILL.md` 생성, 점진적 공개 구조 강제, 기본 스킬 10개, **`common/utils/` 4개 동봉 (pdf-extract / xlsx-read / xlsx-write / csv-rw — Python lazy 디텍션)**, 로컬 SQLite 메모리(자동 prefetch OFF), 컨텍스트 압축 default ON, Haiku 라우팅 |
+| 단계 | 프로필 | 포함 기능 | 진척 |
+| --- | --- | --- | --- |
+| **MVP** | `eco` (기본) | 온보딩 인터뷰 → `.agents/skills/<name>/SKILL.md` 생성, 점진적 공개 구조 강제, 기본 스킬 10개, **`common/utils/` 4개 동봉 (pdf-extract / xlsx-read / xlsx-write / csv-rw — Python lazy 디텍션)**, 로컬 SQLite 메모리(자동 prefetch OFF), 컨텍스트 압축 default ON, Haiku 라우팅 | ✅ Phase 1~8 완료 (가이드 §8 정식 phase 모두 통과, E2E 13/13) |
 | **MVP** | `standard` (옵트인) | + **Description Tuner 1회 실행** (스킬 생성 시점 한정), 명시 호출 evals |
 | **v0.2** | `standard`+ | **Skill Creator (세션 종료 시 요약 1회 — 풀 캡처 X)**, 도구 통합 5종 (Figma/Notion/Gmail/Teams/Webhook), `DESIGN.md` + `design-html` |
 | **v0.3** | `power` (파워유저) | with/without 벤치마크(명시 호출), `design-shotgun`(2변형) / `design-review`, 압박 테스트 서브에이전트, 신뢰 게이팅, compatibility 도구 설치 가이드, 스케줄링, 직군별 스타터 팩 |

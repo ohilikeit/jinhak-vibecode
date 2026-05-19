@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 # tests/integration/test-jobs-pdf-to-excel.sh
-# Phase 7 End-to-End: 3 PDF → /build → output/jobs.xlsx 검증
-# 모든 작업은 mktemp 격리 환경에서 수행됨 (~/.harness 미수정 보장)
+# Phase 7 End-to-End (가이드 docs/GOAL_MODE_IMPLEMENTATION_GUIDE.md §3):
+#   1. mktemp으로 격리 HARNESS_HOME 생성
+#   2. 3개 한국어 PDF를 inbox/jobs/에 배치
+#   3. node bin/install.js start — stdin으로 인터뷰 5답변 mocking
+#   4. node bin/install.js build "채용공고 PDF → Excel 정리"
+#   5. output/jobs.xlsx 생성 확인
+#   6. openpyxl로 3행 + 헤더 + 회사명 검증
+#   7. ~/.harness, ~/.agents 미수정 가드레일
+#   8. 결과를 마크다운 표로 출력 (평가자 evidence)
 set -eu
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -30,8 +37,25 @@ ls inbox/jobs/ | sed 's/^/  PDF /'
 # 템플릿 생성
 "$PY" "$ROOT/test-fixtures/make-5col-template.py" assets/template.xlsx
 
-# /build 실행
-JINHAK_PYTHON="$PY" node "$INSTALL" build "채용공고 PDF를 Excel로 정리해줘" 2>&1 | tee /tmp/build.log
+# /start 인터뷰 (가이드 Phase 7 step 3) — stdin으로 5답변 mocking
+echo
+echo "▶ Step 3: /start (mocked stdin)"
+printf '기획\n채용공고 정리\nExcel\n존댓말\nGmail, Notion\n' | \
+  JINHAK_PYTHON="$PY" node "$INSTALL" start 2>&1 | sed 's/^/  start │ /'
+
+PROFILE="$HARNESS_HOME/user-profile.md"
+STATE="$TMP/.harness/state.md"
+[ -f "$PROFILE" ] && ok "user-profile.md 생성: $PROFILE" || ng "user-profile.md 누락"
+[ -f "$STATE" ]   && ok ".harness/state.md 생성: $STATE" || ng "state.md 누락"
+# 5답변 모두 프로필에 보존
+for expected in '기획' '채용공고 정리' 'Excel' '존댓말' 'Gmail' 'Notion'; do
+  grep -qF "$expected" "$PROFILE" 2>/dev/null && ok "프로필에 '$expected' 포함" || ng "프로필에 '$expected' 누락"
+done
+
+# /build 실행 (가이드 Phase 7 step 4)
+echo
+echo "▶ Step 4: /build"
+JINHAK_PYTHON="$PY" node "$INSTALL" build "채용공고 PDF → Excel 정리" 2>&1 | tee /tmp/build.log
 [ -f output/jobs.xlsx ] && ok "output/jobs.xlsx 생성됨" || ng "output xlsx 누락"
 
 # 결과 검증: openpyxl로 행/헤더/회사명

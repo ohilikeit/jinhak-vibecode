@@ -525,10 +525,11 @@ npx jinhak-harness@latest
    - KW Plugins의 marketing 또는 sales 플러그인 1개 골라 SKILL.md 깊이 읽기
    - GSD의 gsd-user-profiler.md + ADR-0011 정독 후 우리 ADR-001 초안화
 
-2. **MVP 스코프 확정** (Layer 1+2+3 + eco 프로필 only)
+2. **MVP 스코프 확정** (Layer 1+2+3 + eco 프로필 only) — ✅ 완료 (2026-05-19)
    - 멀티 AI 호환 훅 + 직군 인터뷰 + SKILL.md 생성 + 기본 스킬 10개
    - 도구 통합·메모리 prefetch·디자인·평가는 v0.2+로 미룸
    - **eco 프로필 토큰 예산 측정 벤치**: 인터뷰 1회 + 자동화 5회 = 4시간 한도 내 가능 확인
+   - 진척: 가이드 §8 정식 Phase 1~8 모두 통과, E2E 격리 통합 테스트 13/13 통과
 
 3. **첫 직군 선정** — 기획 또는 마케팅 (한국 시장 가장 큰 비개발 SaaS 사용자층)
 
