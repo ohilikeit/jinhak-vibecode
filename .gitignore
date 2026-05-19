@@ -1,2 +1,5 @@
 .omc/
 .omx/
+dev-home/
+test-*/
+.venv-dev/

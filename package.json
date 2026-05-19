@@ -1,0 +1,21 @@
+{
+  "name": "jinhak-harness",
+  "version": "0.1.0",
+  "description": "Jinhak vibe-coding harness — global CLI scaffold for agent skills and hooks.",
+  "bin": {
+    "jinhak-harness": "./bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "templates/",
+    "hooks/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "version:print": "node bin/install.js --version"
+  },
+  "license": "MIT",
+  "private": true
+}
