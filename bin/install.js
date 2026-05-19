@@ -6,7 +6,19 @@ const { spawnSync } = require('node:child_process');
 const { harnessHome, agentsSkillsHome, isDevMode } = require('./paths.js');
 const { resolveProfile, budgetFor } = require('./profile.js');
 const { loadSkills } = require('./skills-loader.js');
+const { printCostLabel } = require('./cost-label.js');
 const pkg = require('../package.json');
+
+function emitCostLabel(cmd) {
+  // 메타/진단성은 라벨 생략
+  if (['paths', 'doctor', 'ship'].includes(cmd)) {
+    // doctor/ship은 자기 안에서 출력함; paths는 정보성이라 생략
+    return;
+  }
+  let profile = 'eco';
+  try { profile = resolveProfile(args); } catch {}
+  printCostLabel(cmd, profile);
+}
 
 const args = process.argv.slice(2);
 
@@ -28,6 +40,7 @@ function printHelp() {
       '  build "<요청>"                  실제 실행 (PDF→Excel / 회의록→md 등)',
       '  verify [--expected-rows N]      산출물 친절 한국어 리포트',
       '  handoff [--confirm]             dry-run → --confirm 시 복사',
+      '  ship [--confirm] [--push]       .harness 변경을 git commit',
       '',
       '진단/메타:',
       '  --version, -v                   버전 출력',
@@ -96,6 +109,7 @@ if (args.includes('--help') || args.includes('-h') || args.length === 0) {
 }
 
 const cmd = args[0];
+emitCostLabel(cmd);
 switch (cmd) {
   case 'paths':
     printPaths();
@@ -155,6 +169,16 @@ switch (cmd) {
   case 'doctor': {
     const script = path.resolve(__dirname, 'commands', 'doctor.js');
     const result = spawnSync(process.execPath, [script, ...args.slice(1)], { stdio: 'inherit' });
+    process.exit(result.status ?? 1);
+    break;
+  }
+  case 'ship': {
+    const script = path.resolve(__dirname, 'commands', 'ship.ts');
+    const result = spawnSync(
+      process.execPath,
+      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      { stdio: 'inherit' },
+    );
     process.exit(result.status ?? 1);
     break;
   }
