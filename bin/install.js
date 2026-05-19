@@ -98,6 +98,16 @@ switch (cmd) {
     process.exit(result.status ?? 1);
     break;
   }
+  case 'build': {
+    const script = path.resolve(__dirname, 'commands', 'build.ts');
+    const result = spawnSync(
+      process.execPath,
+      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      { stdio: 'inherit' },
+    );
+    process.exit(result.status ?? 1);
+    break;
+  }
   default:
     process.stderr.write(`jinhak-harness: unknown command "${cmd}"\n`);
     process.stderr.write(`Run "jinhak-harness --help" for usage.\n`);
