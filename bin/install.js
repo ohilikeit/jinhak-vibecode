@@ -4,6 +4,8 @@
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { harnessHome, agentsSkillsHome, isDevMode } = require('./paths.js');
+const { resolveProfile, budgetFor } = require('./profile.js');
+const { loadSkills } = require('./skills-loader.js');
 const pkg = require('../package.json');
 
 const args = process.argv.slice(2);
@@ -43,6 +45,34 @@ function printPaths() {
 
 if (args.includes('--version') || args.includes('-v')) {
   printVersion();
+  process.exit(0);
+}
+
+if (args.includes('--debug-loaded')) {
+  const profile = resolveProfile(args);
+  const budget = budgetFor(profile);
+  const skillsDir = process.env.AGENTS_SKILLS_HOME || agentsSkillsHome();
+  const fallbackDir = require('node:path').resolve(__dirname, '..', 'templates');
+  const dir = require('node:fs').existsSync(skillsDir) ? skillsDir : fallbackDir;
+  const skills = loadSkills(dir, profile);
+
+  const frontmatterLoaded = skills.filter((s) => s.frontmatter_loaded).length;
+  const bodyLoaded = skills.filter((s) => s.body_loaded).length;
+  const bodyEligible = skills.filter((s) => s.body_eligible).length;
+
+  process.stdout.write(
+    [
+      `profile=${profile}`,
+      `skills_dir=${dir}`,
+      `skills_found=${skills.length}`,
+      `frontmatter_loaded=${frontmatterLoaded}`,
+      `body_loaded=${bodyLoaded}`,
+      `body_eligible=${bodyEligible}`,
+      `dry_run_enforced=${budget.dry_run_enforced}`,
+      `benchmark=${budget.benchmark}`,
+      '',
+    ].join('\n'),
+  );
   process.exit(0);
 }
 
