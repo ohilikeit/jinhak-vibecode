@@ -92,7 +92,7 @@ rm -rf output
 run_capture node "$INSTALL" handoff
 [ "$RC" -eq 1 ] && ok "output 없을 때 exit 1" || ng "output 없음 exit=$RC"
 case "$OUT" in
-  *'산출물을 찾지 못했'*) ok "친절한 에러 안내" ;;
+  *'산출물 파일을 찾지 못했어요'*'/build'*) ok "친절한 에러 안내 (template-substitution)" ;;
   *) ng "친절 에러 누락" ;;
 esac
 

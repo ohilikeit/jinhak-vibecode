@@ -101,11 +101,12 @@ case "$OUT" in
 esac
 
 # 기존 jobs-pdf-to-excel 분기는 깨지지 않았는지 (회귀 보호)
-run_capture node "$INSTALL" build "임의 문자열 채용공고만 키워드"
-case "$OUT" in
-  *'jobs-pdf-to-excel'*'inbox 디렉터리를 찾지 못했습니다'*)
-    ok "기존 jobs 라우팅 보존 (PDF inbox 없어서 자연 실패)" ;;
-  *) ng "jobs 라우팅 회귀: $OUT" ;;
+# 친절 리포트는 stderr로 가므로 별도 캡처
+out_err=$(node "$INSTALL" build "임의 문자열 채용공고만 키워드" 2>&1 || true)
+case "$out_err" in
+  *'skill=jobs-pdf-to-excel'*'입력 폴더를 찾지 못했어요'*)
+    ok "기존 jobs 라우팅 보존 (친절 리포트로 inbox-not-found 안내)" ;;
+  *) ng "jobs 라우팅 회귀: $out_err" ;;
 esac
 
 printf '\n결과: %d 통과 / %d 실패\n' "$pass" "$fail"

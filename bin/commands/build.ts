@@ -14,6 +14,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { extract } from "../../templates/common/utils/pdf-extract/scripts/extract.ts";
 import { write } from "../../templates/common/utils/xlsx-write/scripts/write.ts";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { formatError, HarnessError } = require("../friendly-error.js");
 
 interface Args {
   request: string;
@@ -92,16 +95,25 @@ const RULES: Rule[] = [
     ],
     run: async (a) => {
       if (!fs.existsSync(a.inboxJobs))
-        throw new Error(`inbox 디렉터리를 찾지 못했습니다: ${a.inboxJobs}`);
+        throw new HarnessError("inbox-not-found", "inbox missing", {
+          path: a.inboxJobs,
+          skill: "jobs-pdf-to-excel",
+        });
       if (!fs.existsSync(a.templateJobs))
-        throw new Error(`template xlsx를 찾지 못했습니다: ${a.templateJobs}`);
+        throw new HarnessError("template-not-found", "template missing", {
+          path: a.templateJobs,
+        });
       const pdfs = fs
         .readdirSync(a.inboxJobs)
         .filter((f) => f.toLowerCase().endsWith(".pdf"))
         .map((f) => path.join(a.inboxJobs, f))
         .sort();
       if (pdfs.length === 0)
-        throw new Error(`inbox에 PDF가 없습니다: ${a.inboxJobs}`);
+        throw new HarnessError("inbox-empty", "no pdf", {
+          path: a.inboxJobs,
+          kind: "PDF",
+          ext: ".pdf",
+        });
       const rows: Record<string, string>[] = [];
       for (const pdf of pdfs) {
         const { pages } = await extract(pdf, { python: a.python });
@@ -133,14 +145,21 @@ const RULES: Rule[] = [
     ],
     run: async (a) => {
       if (!fs.existsSync(a.inboxMeetings))
-        throw new Error(`inbox 디렉터리를 찾지 못했습니다: ${a.inboxMeetings}`);
+        throw new HarnessError("inbox-not-found", "inbox missing", {
+          path: a.inboxMeetings,
+          skill: "meeting-notes-to-summary",
+        });
       const files = fs
         .readdirSync(a.inboxMeetings)
         .filter((f) => f.toLowerCase().endsWith(".txt"))
         .map((f) => path.join(a.inboxMeetings, f))
         .sort();
       if (files.length === 0)
-        throw new Error(`inbox에 .txt 회의록이 없습니다: ${a.inboxMeetings}`);
+        throw new HarnessError("inbox-empty", "no .txt", {
+          path: a.inboxMeetings,
+          kind: "회의록",
+          ext: ".txt",
+        });
 
       const rows: { 날짜: string; 참석자: string; 결정사항: string; 액션: string }[] = [];
       for (const file of files) {
@@ -184,15 +203,11 @@ async function main() {
 
   const rule = chooseRule(args.request);
   if (!rule) {
-    process.stderr.write(
-      [
-        `요청을 매칭할 스킬이 없습니다: "${args.request}".`,
-        "",
-        "현재 지원하는 자동화:",
-        ...RULES.map((r) => `  - ${r.skill}  (트리거: ${r.keywords.join(", ")})`),
-        "",
-      ].join("\n"),
-    );
+    const err = new HarnessError("skill-not-matched", "no rule", {
+      request: args.request,
+      supported: RULES.map((r) => ({ skill: r.skill, keywords: r.keywords })),
+    });
+    process.stderr.write(formatError(err));
     process.exit(2);
   }
 
@@ -206,6 +221,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  process.stderr.write(`build failed: ${(err as Error).message}\n`);
+  process.stderr.write(formatError(err));
   process.exit(1);
 });

@@ -51,6 +51,7 @@ test-hooks:
 
 test-bin:
 	@./tests/bin/test-profile.sh
+	@./tests/bin/test-friendly-error.sh
 
 test-commands:
 	@./tests/commands/test-start.sh
@@ -65,7 +66,7 @@ test-integration:
 
 test-all: test-hooks test-bin test-commands test-integration
 	@echo ""
-	@echo "🎉 전 테스트 통과 — 9 스위트, 106 assertion"
+	@echo "🎉 전 테스트 통과 — 10 스위트, 122 assertion"
 
 # 빠른 무결성 체크 (CI 사전 게이트용)
 smoke:

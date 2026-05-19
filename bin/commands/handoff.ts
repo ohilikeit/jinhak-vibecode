@@ -11,6 +11,9 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { formatError, HarnessError } = require("../friendly-error.js");
 
 interface Args {
   output: string;
@@ -74,8 +77,8 @@ function main(): number {
   const args = parseArgs(process.argv.slice(2));
 
   if (!fs.existsSync(args.output)) {
-    process.stderr.write(`산출물을 찾지 못했습니다: ${args.output}\n`);
-    process.stderr.write(`/build 와 /verify 를 먼저 실행했는지 확인하세요.\n`);
+    const err = new HarnessError("output-not-found", "output missing", { path: args.output });
+    process.stderr.write(formatError(err));
     return 1;
   }
 

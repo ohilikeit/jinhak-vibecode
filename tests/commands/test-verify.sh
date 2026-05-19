@@ -91,7 +91,7 @@ run_capture env JINHAK_PYTHON="$PY" node "$INSTALL" verify
 printf '\n--- D. 출력 없음 ---\n%s\n(exit %d)\n' "$OUT" "$RC"
 [ "$RC" -eq 1 ] && ok "출력 없음 시 exit 1" || ng "출력 없음 exit=$RC"
 case "$OUT" in
-  *'/build를 먼저 실행'*) ok "사용자 안내 메시지" ;;
+  *'산출물 파일을 찾지 못했어요'*'/build'*) ok "친절한 안내 메시지 (template-substitution)" ;;
   *) ng "안내 메시지 없음" ;;
 esac
 
