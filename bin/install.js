@@ -124,50 +124,50 @@ switch (cmd) {
     break;
   case 'start': {
     // start.ts를 type-stripping 모드로 child process에서 실행
-    const script = path.resolve(__dirname, 'commands', 'start.ts');
+    const script = path.resolve(__dirname, 'commands', 'start.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'build': {
-    const script = path.resolve(__dirname, 'commands', 'build.ts');
+    const script = path.resolve(__dirname, 'commands', 'build.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'verify': {
-    const script = path.resolve(__dirname, 'commands', 'verify.ts');
+    const script = path.resolve(__dirname, 'commands', 'verify.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'handoff': {
-    const script = path.resolve(__dirname, 'commands', 'handoff.ts');
+    const script = path.resolve(__dirname, 'commands', 'handoff.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'plan': {
-    const script = path.resolve(__dirname, 'commands', 'plan.ts');
+    const script = path.resolve(__dirname, 'commands', 'plan.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
@@ -186,30 +186,30 @@ switch (cmd) {
     break;
   }
   case 'ship': {
-    const script = path.resolve(__dirname, 'commands', 'ship.ts');
+    const script = path.resolve(__dirname, 'commands', 'ship.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'create': {
-    const script = path.resolve(__dirname, 'commands', 'create.ts');
+    const script = path.resolve(__dirname, 'commands', 'create.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);
     break;
   }
   case 'autopilot': {
-    const script = path.resolve(__dirname, 'commands', 'autopilot.ts');
+    const script = path.resolve(__dirname, 'commands', 'autopilot.mjs');
     const result = spawnSync(
       process.execPath,
-      ['--experimental-strip-types', '--no-warnings=ExperimentalWarning', script, ...args.slice(1)],
+      [script, ...args.slice(1)],
       { stdio: 'inherit' },
     );
     process.exit(result.status ?? 1);

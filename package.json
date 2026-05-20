@@ -1,6 +1,6 @@
 {
   "name": "jinhak-harness",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "비개발자 직군 자동화 하니스 — 한국어 우선, 토큰 가드 eco 기본, Claude Code/Cursor/Codex/Gemini/Antigravity/OpenCode 모두 호환",
   "keywords": [
     "agent",
@@ -53,8 +53,13 @@
   "scripts": {
     "version:print": "node bin/install.js --version",
     "gen:commands": "node scripts/gen-commands.mjs",
+    "build": "esbuild bin/commands/autopilot.ts bin/commands/build.ts bin/commands/create.ts bin/commands/handoff.ts bin/commands/plan.ts bin/commands/ship.ts bin/commands/start.ts bin/commands/verify.ts --platform=node --format=esm --target=node18 --outdir=bin/commands --out-extension:.js=.mjs --log-level=warning",
     "test": "make test-all",
+    "prepublishOnly": "npm run build",
     "postinstall": "node bin/postinstall.js || true"
   },
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "esbuild": "0.28.0"
+  }
 }

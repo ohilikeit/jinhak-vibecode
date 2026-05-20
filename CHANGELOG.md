@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.2 (2026-05-20)
+
+### 수정 (critical)
+- **Node 20/22 호환성**: 0.1.0/0.1.1은 `.ts` 커맨드 (plan/build/verify/start/handoff/ship/create/autopilot) 8개가 `--experimental-strip-types` 옵션을 사용했는데, 이 옵션은 Node의 보안 정책상 `node_modules/` 아래 파일엔 적용되지 않아 글로벌 설치 시 항상 실패했다. 모든 Node 버전에서 깨졌음.
+- **빌드 도입**: `esbuild` (devDependency)로 `.ts → .mjs` (ESM) 변환을 `prepublishOnly`에서 수행. 사용자 install에는 빌드된 `.mjs` 만 사용되며 esbuild 자체는 안 깔림.
+- `bin/install.js`: 8개 커맨드 dispatch 경로 `*.ts` → `*.mjs`, `--experimental-strip-types` 플래그 제거.
+
+### 변경
+- `package.json`: `devDependencies.esbuild` 추가, `scripts.build` + `scripts.prepublishOnly` 추가.
+- `.npmignore` 신규.
+
 ## 0.1.1 (2026-05-20)
 
 ### 수정
