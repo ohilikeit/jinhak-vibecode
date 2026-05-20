@@ -1,6 +1,6 @@
 # /unregister — 슬래시 커맨드 제거
 
-`register` 의 역연산. 6 호스트 user-level dir의 `jinhak-harness/` 서브디렉터리를 비웁니다. CLI 자체(글로벌 바이너리)는 영향받지 않습니다.
+`register` 의 역연산. 6 호스트 user-level dir의 `jinhak/` 서브디렉터리를 비웁니다. CLI 자체(글로벌 바이너리)는 영향받지 않습니다.
 
 ## 실행
 

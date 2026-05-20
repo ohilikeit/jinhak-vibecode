@@ -6,7 +6,7 @@
 
 ## 0. 한 줄 요약
 
-`설치 → register → init → doctor → start → plan → build → verify → handoff`. CLI 백엔드 + 6 AI 호스트 슬래시 커맨드 진입점(`/jinhak-harness:*`). 8행동 차원·토큰 가드·dry-run 강제·멀티 AI 호환 모두 기본.
+`설치 → register → init → doctor → start → plan → build → verify → handoff`. CLI 백엔드 + 6 AI 호스트 슬래시 커맨드 진입점(`/jinhak:*`). 8행동 차원·토큰 가드·dry-run 강제·멀티 AI 호환 모두 기본.
 
 ---
 
@@ -33,7 +33,7 @@ jinhak-harness start
 
 이후 AI 도구(Claude Code/Cursor/Codex/Gemini/Antigravity/OpenCode) 채팅창에서:
 ```
-/jinhak-harness:autopilot 채용공고 Excel 정리
+/jinhak:autopilot 채용공고 Excel 정리
 ```
 
 ---
@@ -93,7 +93,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 ## 2.5. 슬래시 커맨드 등록 — `jinhak-harness register`
 
-CLI 설치 후 AI 도구 채팅창에 `/jinhak-harness:*` 형태로 12개 커맨드가 뜨려면 등록 단계가 필요합니다:
+CLI 설치 후 AI 도구 채팅창에 `/jinhak:*` 형태로 12개 커맨드가 뜨려면 등록 단계가 필요합니다:
 
 ```bash
 jinhak-harness register              # 6 호스트 모두 등록
@@ -106,12 +106,12 @@ jinhak-harness unregister            # 모두 제거
 
 | 호스트 | 위치 | 슬래시 |
 |---|---|---|
-| Claude Code | `~/.claude/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Cursor | `~/.cursor/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Codex CLI | `~/.codex/prompts/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Gemini CLI | `~/.gemini/commands/jinhak-harness/*.toml` | `/jinhak-harness:init` |
-| Antigravity | `~/.gemini/antigravity/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| OpenCode | `~/.config/opencode/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| Claude Code | `~/.claude/commands/jinhak/*.md` | `/jinhak:init` |
+| Cursor | `~/.cursor/commands/jinhak/*.md` | `/jinhak:init` |
+| Codex CLI | `~/.codex/prompts/jinhak/*.md` | `/jinhak:init` |
+| Gemini CLI | `~/.gemini/commands/jinhak/*.toml` | `/jinhak:init` |
+| Antigravity | `~/.gemini/antigravity/commands/jinhak/*.md` | `/jinhak:init` |
+| OpenCode | `~/.config/opencode/commands/jinhak/*.md` | `/jinhak:init` |
 
 등록 후 해당 AI 도구를 **완전히 종료-재실행** 해주세요 (자동완성 캐시 갱신).
 

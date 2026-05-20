@@ -3,13 +3,13 @@
 ## Unreleased
 
 ### 추가
-- **`register` / `unregister` 명령** — CLI 한 번의 호출로 6 AI 호스트 user-level dir에 슬래시 커맨드를 `jinhak-harness/` 서브디렉터리로 복사. 호스트별 네이티브 네임스페이싱이 자동으로 `/jinhak-harness:init` 형태를 만들어준다.
-  - Claude Code: `~/.claude/commands/jinhak-harness/*.md`
-  - Cursor: `~/.cursor/commands/jinhak-harness/*.md`
-  - Codex CLI: `~/.codex/prompts/jinhak-harness/*.md`
-  - Gemini CLI: `~/.gemini/commands/jinhak-harness/*.toml`
-  - Antigravity: `~/.gemini/antigravity/commands/jinhak-harness/*.md`
-  - OpenCode: `~/.config/opencode/commands/jinhak-harness/*.md`
+- **`register` / `unregister` 명령** — CLI 한 번의 호출로 6 AI 호스트 user-level dir에 슬래시 커맨드를 `jinhak/` 서브디렉터리로 복사. 호스트별 네이티브 네임스페이싱이 자동으로 `/jinhak:init` 형태를 만들어준다.
+  - Claude Code: `~/.claude/commands/jinhak/*.md`
+  - Cursor: `~/.cursor/commands/jinhak/*.md`
+  - Codex CLI: `~/.codex/prompts/jinhak/*.md`
+  - Gemini CLI: `~/.gemini/commands/jinhak/*.toml`
+  - Antigravity: `~/.gemini/antigravity/commands/jinhak/*.md`
+  - OpenCode: `~/.config/opencode/commands/jinhak/*.md`
 - **슬래시 커맨드 진입점** `commands/*.md` × 12 (canonical Markdown + frontmatter)
 - **Cursor / Gemini 변환본** `.cursor/commands/*.md` (frontmatter 제거), `.gemini/commands/*.toml` (TOML) — `scripts/gen-commands.mjs` 가 idempotent generate
 - 호스트 등록 검증 테스트 `tests/commands/test-register.sh` (27 assertion)
@@ -25,7 +25,7 @@
 - `hooks/session-start` — alwaysApply baseline SKILL.md 본문 동적 합성
 
 ### 문서 / DX
-- 모든 사용 예시의 슬래시를 `/<cmd>` → `/jinhak-harness:<cmd>` 네임스페이스로 정정
+- 모든 사용 예시의 슬래시를 `/<cmd>` → `/jinhak:<cmd>` 네임스페이스로 정정
 - Windows ExecutionPolicy 사전 가이드를 GETTING_STARTED §2 / README Quick Start에 명시
 
 ---

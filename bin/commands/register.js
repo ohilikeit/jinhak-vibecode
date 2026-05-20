@@ -2,7 +2,7 @@
 'use strict';
 
 // bin/commands/register.js — 6 AI 호스트의 user-level commands/skills 디렉터리에
-// canonical commands/*.md(.toml)을 jinhak-harness/ 서브디렉터리로 복사한다.
+// canonical commands/*.md(.toml)을 jinhak/ 서브디렉터리로 복사한다.
 //
 // 사용:
 //   jinhak-harness register              모든 호스트에 등록 (실제 복사)
@@ -16,7 +16,7 @@ const path = require('node:path');
 const os = require('node:os');
 
 const PKG_ROOT = path.resolve(__dirname, '..', '..');
-const NS = 'jinhak-harness'; // 슬래시 커맨드 네임스페이스 — /jinhak-harness:init
+const NS = 'jinhak'; // 슬래시 커맨드 네임스페이스 — /jinhak:init
 
 // ── 호스트별 등록 위치 ────────────────────────────────────────────
 function hostTargets() {
@@ -29,7 +29,7 @@ function hostTargets() {
       dst: path.join(home, '.claude', 'commands', NS),
       ext: '.md',
       format: 'markdown-with-frontmatter',
-      sample: '/jinhak-harness:init',
+      sample: '/jinhak:init',
     },
     {
       id: 'cursor',
@@ -38,7 +38,7 @@ function hostTargets() {
       dst: path.join(home, '.cursor', 'commands', NS),
       ext: '.md',
       format: 'markdown-no-frontmatter',
-      sample: '/jinhak-harness:init',
+      sample: '/jinhak:init',
     },
     {
       id: 'codex',
@@ -47,7 +47,7 @@ function hostTargets() {
       dst: path.join(home, '.codex', 'prompts', NS),
       ext: '.md',
       format: 'markdown-with-frontmatter',
-      sample: '/prompts:jinhak-harness:init  (또는 /jinhak-harness:init)',
+      sample: '/prompts:jinhak:init  (또는 /jinhak:init)',
     },
     {
       id: 'gemini',
@@ -56,7 +56,7 @@ function hostTargets() {
       dst: path.join(home, '.gemini', 'commands', NS),
       ext: '.toml',
       format: 'toml',
-      sample: '/jinhak-harness:init',
+      sample: '/jinhak:init',
     },
     {
       id: 'antigravity',
@@ -65,7 +65,7 @@ function hostTargets() {
       dst: path.join(home, '.gemini', 'antigravity', 'commands', NS),
       ext: '.md',
       format: 'markdown-with-frontmatter',
-      sample: '/jinhak-harness:init',
+      sample: '/jinhak:init',
     },
     {
       id: 'opencode',
@@ -74,7 +74,7 @@ function hostTargets() {
       dst: path.join(home, '.config', 'opencode', 'commands', NS),
       ext: '.md',
       format: 'markdown-with-frontmatter',
-      sample: '/jinhak-harness:init',
+      sample: '/jinhak:init',
     },
   ];
 }
@@ -187,7 +187,7 @@ function main() {
   if (action === 'register' && !dryRun) {
     process.stdout.write(`\n다음 단계:\n`);
     process.stdout.write(`  1) 해당 AI 도구를 완전히 종료 후 다시 실행하세요 (자동완성 갱신)\n`);
-    process.stdout.write(`  2) 채팅창에서 "/" 입력 시 jinhak-harness:* 가 후보로 떠야 합니다\n`);
+    process.stdout.write(`  2) 채팅창에서 "/" 입력 시 jinhak:* 가 후보로 떠야 합니다\n`);
     process.stdout.write(`  3) 안 뜨면 jinhak-harness doctor 로 진단\n`);
     process.stdout.write(`\n제거: jinhak-harness unregister\n`);
   }

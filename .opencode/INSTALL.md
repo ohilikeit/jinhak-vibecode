@@ -18,13 +18,13 @@ jinhak-harness register --host=opencode
 
 ### 슬래시 커맨드
 
-`register` 가 `~/.config/opencode/commands/jinhak-harness/*.md` 로 12개 커맨드를 복사합니다. OpenCode를 재시작하면 채팅창에서 자동완성 후보로 노출:
+`register` 가 `~/.config/opencode/commands/jinhak/*.md` 로 12개 커맨드를 복사합니다. OpenCode를 재시작하면 채팅창에서 자동완성 후보로 노출:
 
 ```
-/jinhak-harness:init
-/jinhak-harness:doctor
-/jinhak-harness:start
-/jinhak-harness:autopilot 채용공고 Excel 정리
+/jinhak:init
+/jinhak:doctor
+/jinhak:start
+/jinhak:autopilot 채용공고 Excel 정리
 ```
 
 ### 스킬 (.agents/skills/)

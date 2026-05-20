@@ -1,5 +1,5 @@
 ---
-description: 슬래시 커맨드를 6 AI 호스트에 한 번에 등록 — /jinhak-harness:* 형태로 노출
+description: 슬래시 커맨드를 6 AI 호스트에 한 번에 등록 — /jinhak:* 형태로 노출
 argument-hint: "[--host=claude,cursor,...] [--dry-run]"
 allowed-tools:
   - Bash
@@ -7,7 +7,7 @@ allowed-tools:
 
 # /register — 6 호스트에 슬래시 커맨드 등록
 
-CLI를 설치한 후, AI 도구 채팅창에서 `/jinhak-harness:init` `/jinhak-harness:build` 등으로 호출하려면 각 호스트의 user-level commands/ 디렉터리에 사본을 복사해야 합니다. `register` 가 이 단계를 6 호스트 모두에 한 번에 수행합니다.
+CLI를 설치한 후, AI 도구 채팅창에서 `/jinhak:init` `/jinhak:build` 등으로 호출하려면 각 호스트의 user-level commands/ 디렉터리에 사본을 복사해야 합니다. `register` 가 이 단계를 6 호스트 모두에 한 번에 수행합니다.
 
 ## 실행
 
@@ -39,12 +39,12 @@ jinhak-harness register $ARGUMENTS
 
 | 호스트 | 경로 | 결과 |
 |---|---|---|
-| Claude Code | `~/.claude/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Cursor | `~/.cursor/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Codex CLI | `~/.codex/prompts/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| Gemini CLI | `~/.gemini/commands/jinhak-harness/*.toml` | `/jinhak-harness:init` |
-| Antigravity | `~/.gemini/antigravity/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
-| OpenCode | `~/.config/opencode/commands/jinhak-harness/*.md` | `/jinhak-harness:init` |
+| Claude Code | `~/.claude/commands/jinhak/*.md` | `/jinhak:init` |
+| Cursor | `~/.cursor/commands/jinhak/*.md` | `/jinhak:init` |
+| Codex CLI | `~/.codex/prompts/jinhak/*.md` | `/jinhak:init` |
+| Gemini CLI | `~/.gemini/commands/jinhak/*.toml` | `/jinhak:init` |
+| Antigravity | `~/.gemini/antigravity/commands/jinhak/*.md` | `/jinhak:init` |
+| OpenCode | `~/.config/opencode/commands/jinhak/*.md` | `/jinhak:init` |
 
 ## 적용 안 보일 때
 
