@@ -6,3 +6,16 @@ test-*/
 .venv-dev/
 __pycache__/
 *.pyc
+
+# build artifacts & dev
+node_modules/
+.harness/
+*.tgz
+bin/commands/autopilot.mjs
+bin/commands/build.mjs
+bin/commands/create.mjs
+bin/commands/handoff.mjs
+bin/commands/plan.mjs
+bin/commands/ship.mjs
+bin/commands/start.mjs
+bin/commands/verify.mjs

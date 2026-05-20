@@ -65,7 +65,7 @@
 - baseline 스킬 (`alwaysApply: true`) — 한국어 우선·dry-run 강제 등 정책 layer
 - 동적 user-skill 등록 — `create` 로 만든 스킬이 `plan`·`build` 에 자동 인식
 - 친절 실패 리포트 (변수 치환 템플릿, LLM 호출 0)
-- 토큰 가드 라벨 🟢🟡🔴 (REPORT_06 §6.5)
+- 토큰 가드 라벨 🟢🟡🔴 (docs/research/REPORT_06 §6.5)
 - 8 행동 차원 user-profiler (휴리스틱)
 - 메모리 facade 4메서드 (JSON 백엔드, 향후 SQLite swap 가능)
 - 프로필 분기 eco/standard/power (ADR-001)
