@@ -56,32 +56,31 @@ python3 --version       # 이미 깔려 있는지 확인
 
 ---
 
-## 2. jinhak-harness 설치 (3줄)
+## 2. jinhak-harness 설치 (1줄)
 
-Windows는 사전에 PowerShell 관리자에서 한 번:
+이미 **npm에 publish 되어 있어요**. Git Bash(Windows) 또는 macOS/Linux 터미널에서:
+
+```bash
+npm install -g jinhak-harness@beta
+```
+
+Windows라면 그 전에 관리자 PowerShell에서 한 번:
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
-그 다음 Git Bash(또는 macOS/Linux 터미널)에서:
-```bash
-cd ~/Downloads
-git clone https://github.com/ohilikeit/jinhak-vibecode.git
-cd jinhak-vibecode && npm link
-```
-
 확인:
 ```bash
-jinhak-harness --version       # → jinhak-harness v0.1.0
+jinhak-harness --version       # → jinhak-harness v0.1.3
 ```
 
-> 왜 `npm install -g` 가 아닌가: 일부 Windows 환경에서 `npm install -g github:...` 가
-> 추출 단계에서 실패하는 사례가 있어 `git clone + npm link` 를 권장합니다. 정식 npm publish 후엔
-> `npm install -g jinhak-harness` 한 줄로 바뀝니다.
+> **왜 `@beta` 인가요?** 가장 안정적인 최신판(0.1.3)이 아직 `beta` 태그에 있어요. `@beta` 없이 깔면 초기 0.1.0이 받아져 Node 20/22, Windows nvm 환경 등에서 슬래시 커맨드가 동작하지 않습니다. **항상 `@beta` 또는 `@0.1.3` 명시 권장.**
+>
+> `latest` 태그가 0.1.3으로 옮겨지면 그때부터 `@beta` 없이도 동일하게 동작합니다 (이 문서가 그에 맞춰 갱신될 예정).
 
-### 2-1. AI 도구에 슬래시 커맨드 등록 (1줄)
+### 2-1. AI 도구에 슬래시 커맨드 등록
 
-CLI는 깔렸지만 AI 도구 채팅창의 슬래시 메뉴(`/jinhak:*`)에는 아직 안 뜹니다. 한 번 더:
+CLI 설치만으로는 AI 도구 채팅창의 슬래시 메뉴(`/jinhak:*`)가 자동으로 뜨지 않습니다. 한 줄 더:
 
 ```bash
 jinhak-harness register
@@ -89,14 +88,16 @@ jinhak-harness register
 
 이러면 6 호스트(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)의 user-level commands 디렉터리로 12개 슬래시 커맨드가 한 번에 복사됩니다. 적용 후 AI 도구를 **완전히 종료-재실행**하세요 (자동완성 캐시 갱신).
 
-미리 보기:
+**팁 — install + register를 진짜 한 줄로:**
 ```bash
-jinhak-harness register --dry-run
+JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
 ```
+postinstall이 끝나면서 자동으로 `register` 까지 돌려줍니다.
 
-제거:
+미리 보기 / 제거:
 ```bash
-jinhak-harness unregister
+jinhak-harness register --dry-run   # 어디로 복사될지만 확인
+jinhak-harness unregister           # 6 호스트에서 모두 제거
 ```
 
 ---
@@ -286,12 +287,11 @@ A. 깨끗하게 한 번에:
 # 1) 6 호스트에서 슬래시 커맨드 제거
 jinhak-harness unregister
 
-# 2) CLI 자체 제거 (npm link로 깐 경우)
-cd ~/Downloads/jinhak-vibecode
-npm unlink -g jinhak-harness
+# 2) CLI 자체 제거
+npm uninstall -g jinhak-harness
 
-# 3) 클론 폴더 + 설정 삭제 (선택)
-rm -rf ~/Downloads/jinhak-vibecode ~/.harness
+# 3) 사용자 설정 + 메모리 삭제 (선택)
+rm -rf ~/.harness
 ```
 
 ---
@@ -299,7 +299,7 @@ rm -rf ~/Downloads/jinhak-vibecode ~/.harness
 ## 9. 막혔을 때 / 도움 요청
 
 - 친절한 한국어 에러 메시지가 어디가 문제인지 알려줍니다 (LLM 호출 없이도)
-- 그래도 해결 안 되면: `/jinhak:doctor` 결과를 캡처해서 https://github.com/ohilikeit/jinhak-vibecode/issues 에 올려주세요
+- 그래도 해결 안 되면: `/jinhak:doctor` 결과를 캡처해서 https://github.com/jihwanyoon/jinhak-vibecode/issues 에 올려주세요
 - 또는 회사 IT 담당자에게 이 문서를 함께 전달해 주세요
 
 ---
@@ -327,4 +327,4 @@ rm -rf ~/Downloads/jinhak-vibecode ~/.harness
 
 ---
 
-**한 줄 요약**: 설치 후 한 번 `jinhak-harness register`, 그 다음 AI 채팅창에서 `/jinhak:init → :doctor → :start → :autopilot "<요청>"`. 🌱
+**한 줄 요약**: `JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta` → AI 도구 재시작 → 채팅창에서 `/jinhak:start → /jinhak:autopilot "<요청>"`. 🌱

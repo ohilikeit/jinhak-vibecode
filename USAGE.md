@@ -13,21 +13,16 @@
 ## 1. 빠른 시작 (5분)
 
 ```bash
-# 1. 클론 + npm link (가장 신뢰성 높은 경로)
-cd ~/Downloads
-git clone https://github.com/ohilikeit/jinhak-vibecode.git
-cd jinhak-vibecode && npm link
+# 1. CLI 설치 + 6 AI 호스트 슬래시 자동 등록 (한 줄)
+JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
 
-# 2. 6 AI 호스트 채팅창에 슬래시 등록 (한 번만)
-jinhak-harness register
-
-# 3. 첫 셋업 (~/.harness 자동 생성)
+# 2. 첫 셋업 (~/.harness 자동 생성)
 jinhak-harness init
 
-# 4. 환경 점검 (의존성/프로필/스킬 카탈로그)
+# 3. 환경 점검 (의존성/프로필/스킬 카탈로그)
 jinhak-harness doctor
 
-# 5. 5문항 직군 인터뷰
+# 4. 5문항 직군 인터뷰
 jinhak-harness start
 ```
 
@@ -40,31 +35,46 @@ jinhak-harness start
 
 ## 2. 설치 옵션
 
-### 옵션 A — git clone + npm link (현 단계 권장)
+### 옵션 A — npm install -g (권장)
 
 ```bash
-git clone https://github.com/ohilikeit/jinhak-vibecode.git
+npm install -g jinhak-harness@beta
+jinhak-harness --version    # → jinhak-harness v0.1.3
+jinhak-harness register     # 6 AI 호스트에 슬래시 등록
+```
+
+또는 install+register를 한 줄로:
+```bash
+JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
+```
+
+업데이트는 `npm install -g jinhak-harness@beta` 다시 한 번이면 끝.
+
+> **`@beta` 가 필수인 이유**: 현재 `dist-tags.latest` 가 첫 publish인 0.1.0에 박혀 있어 그냥 `jinhak-harness` 만 치면 postinstall/Node 20+ 빌드 이슈가 있는 0.1.0이 깔립니다. `@beta` (= 0.1.3) 또는 `@0.1.3` 명시를 권장합니다. latest 가 0.1.3 으로 이동한 뒤엔 `@beta` 없이도 동작합니다.
+
+### 옵션 B — 개발자/기여자용 (git clone + npm link)
+
+소스를 수정하면서 즉시 반영하고 싶을 때만 사용합니다.
+
+```bash
+git clone https://github.com/jihwanyoon/jinhak-vibecode.git
 cd jinhak-vibecode
+npm install                 # devDependencies (esbuild)
+npm run build               # bin/commands/*.ts → *.mjs
 npm link
-jinhak-harness --version    # 0.1.0 출력되면 OK
+jinhak-harness --version    # 로컬 빌드 버전 출력
 make test-all               # 22 스위트 전부 통과 확인 (선택)
 ```
 
-`git pull` 한 번으로 업데이트 — symlink라 즉시 반영.
+`git pull` + `npm run build` 한 번으로 업데이트 — symlink라 즉시 반영.
 
-### 옵션 B — npm install -g github:... (Linux/macOS 친화)
-
-```bash
-npm install -g github:ohilikeit/jinhak-vibecode
-```
-
-Windows 일부 환경에서 추출 단계가 묵음 실패하는 사례가 있어 옵션 A를 우선 권장합니다.
-
-### 옵션 C — npm publish 후 (예정)
+### 옵션 C — GitHub tarball 직접 설치 (publish 우회)
 
 ```bash
-npm install -g jinhak-harness    # publish 풀리면
+npm install -g github:jihwanyoon/jinhak-vibecode
 ```
+
+Windows 일부 환경에서 추출 단계가 묵음 실패하는 사례가 있으니 옵션 A를 먼저 시도하세요.
 
 ### Python 도구
 

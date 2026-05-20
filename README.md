@@ -7,24 +7,31 @@
 
 ## ⚡ 30초 설치
 
+npm에 publish 되어 있습니다 (현재 안정 최신: **v0.1.3 / `@beta` 태그**). Git Bash(Windows)나 macOS/Linux 터미널에서 **한 줄**:
+
+```bash
+JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
+```
+
+postinstall이 6 호스트(Claude Code · Cursor · Codex · Gemini · Antigravity · OpenCode)의 user-level commands 디렉터리로 12개 `/jinhak:*` 슬래시 커맨드를 자동 등록합니다. 자동 등록을 원치 않으면 `JINHAK_AUTO_REGISTER=1`을 빼고 나중에 `jinhak-harness register`를 따로 돌려도 됩니다.
+
 Windows는 사전에 관리자 PowerShell에서 한 번:
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
-Git Bash(또는 macOS/Linux 터미널)에서:
+설치 확인:
 ```bash
-cd ~/Downloads
-git clone https://github.com/ohilikeit/jinhak-vibecode.git
-cd jinhak-vibecode && npm link
-jinhak-harness register
+jinhak-harness --version       # → jinhak-harness v0.1.3
 ```
 
-그 다음 AI 도구를 종료-재실행하고 채팅창에서:
+그 다음 AI 도구를 **완전히 종료-재실행** 하고 채팅창에서:
 ```
 /jinhak:autopilot 채용공고 Excel 정리
 ```
 
+> **`@beta` 가 필수인 이유**: `dist-tags.latest` 가 아직 첫 publish인 0.1.0에 박혀 있어 그냥 `npm install -g jinhak-harness` 만 치면 postinstall/빌드 버그가 있는 0.1.0이 받아집니다. `@beta` 또는 `@0.1.3` 명시를 권장합니다.
+>
 > 자세한 단계·시나리오·FAQ는 [GETTING_STARTED.md](./GETTING_STARTED.md) 참고.
 
 ---
