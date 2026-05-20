@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 (2026-05-20)
+
+### 수정
+- **postinstall**: `JINHAK_NO_GREETING=1` 또는 `CI=true` 환경에서 `JINHAK_AUTO_REGISTER=1` 이 동작하지 않던 버그 수정. silent 플래그는 banner만 억제하고 자동 register는 사용자가 명시 opt-in 했으므로 실행되어야 함. (0.1.0에서 silent 체크가 auto-register 분기 이전에 `process.exit(0)` 시켜 무시됨)
+
 ## Unreleased
 
 ### 추가
