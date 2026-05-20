@@ -12,7 +12,7 @@ allowed-tools:
 ## 실행
 
 ```bash
-jinhak-harness init
+npx -y jinhak-harness init
 ```
 
 성공 시 한국어로 생성된 경로를 안내합니다. 이미 존재하면 무해하게 종료합니다 (idempotent).

@@ -5,7 +5,7 @@
 ## 실행
 
 ```bash
-jinhak-harness build "$ARGUMENTS"
+npx -y jinhak-harness build "$ARGUMENTS"
 ```
 
 `$ARGUMENTS`가 비면 사용법(exit 2). 사용자에게 자연어로 요청을 받아 그대로 전달하세요.

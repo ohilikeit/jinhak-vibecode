@@ -8,13 +8,13 @@ prompt = """
 ## 실행
 
 ```bash
-jinhak-harness autopilot "$ARGUMENTS"
+npx -y jinhak-harness autopilot "$ARGUMENTS"
 ```
 
 기대 행 수까지 알 때 (가장 안전):
 
 ```bash
-jinhak-harness autopilot "$ARGUMENTS"
+npx -y jinhak-harness autopilot "$ARGUMENTS"
 # 단, $ARGUMENTS 에 --expected-rows 가 포함돼 있어야 함
 ```
 

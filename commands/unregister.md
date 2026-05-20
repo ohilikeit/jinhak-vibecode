@@ -12,31 +12,31 @@ allowed-tools:
 ## 실행
 
 ```bash
-jinhak-harness unregister
+npx -y jinhak-harness unregister
 ```
 
 미리 보기:
 
 ```bash
-jinhak-harness unregister --dry-run
+npx -y jinhak-harness unregister --dry-run
 ```
 
 특정 호스트만:
 
 ```bash
-jinhak-harness unregister --host=claude
+npx -y jinhak-harness unregister --host=claude
 ```
 
 `$ARGUMENTS` 그대로 전달:
 
 ```bash
-jinhak-harness unregister $ARGUMENTS
+npx -y jinhak-harness unregister $ARGUMENTS
 ```
 
 ## 완전 삭제 (CLI 포함)
 
 ```bash
-jinhak-harness unregister          # 호스트 슬래시 커맨드 제거
+npx -y jinhak-harness unregister          # 호스트 슬래시 커맨드 제거
 npm uninstall -g jinhak-harness    # CLI 글로벌 제거
 rm -rf ~/.harness                  # 설정·메모리 제거 (선택)
 ```

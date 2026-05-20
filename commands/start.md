@@ -12,7 +12,7 @@ allowed-tools:
 ## 실행
 
 ```bash
-jinhak-harness start
+npx -y jinhak-harness start
 ```
 
 이 명령은 stdin으로 5개 답변을 받는 대화형 프로그램입니다. 채팅에서 한 질문씩 사용자에게 묻고 답을 모은 뒤, 한 번에 줄바꿈으로 구분해 stdin에 전달하세요.

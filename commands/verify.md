@@ -14,13 +14,13 @@ allowed-tools:
 인자가 없을 때:
 
 ```bash
-jinhak-harness verify
+npx -y jinhak-harness verify
 ```
 
 기대 행 수를 알고 있을 때(권장):
 
 ```bash
-jinhak-harness verify --expected-rows 3
+npx -y jinhak-harness verify --expected-rows 3
 ```
 
 `$ARGUMENTS` 에 `--expected-rows N` 패턴이 있으면 그대로 전달, 없으면 인자 없이 호출.

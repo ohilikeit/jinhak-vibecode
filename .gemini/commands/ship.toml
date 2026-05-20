@@ -10,25 +10,25 @@ prompt = """
 미리 보기 (어떤 파일이 커밋될지):
 
 ```bash
-jinhak-harness ship
+npx -y jinhak-harness ship
 ```
 
 실제 커밋:
 
 ```bash
-jinhak-harness ship --confirm
+npx -y jinhak-harness ship --confirm
 ```
 
 원격 푸시까지:
 
 ```bash
-jinhak-harness ship --confirm --push
+npx -y jinhak-harness ship --confirm --push
 ```
 
 `$ARGUMENTS` 그대로 전달:
 
 ```bash
-jinhak-harness ship $ARGUMENTS
+npx -y jinhak-harness ship $ARGUMENTS
 ```
 
 ## 사용 시점

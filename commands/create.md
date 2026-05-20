@@ -12,7 +12,7 @@ allowed-tools:
 ## 실행
 
 ```bash
-jinhak-harness create
+npx -y jinhak-harness create
 ```
 
 대화형 프로그램이므로 채팅에서 다음 6문항을 순서대로 물어 사용자 답변을 stdin으로 전달하세요:

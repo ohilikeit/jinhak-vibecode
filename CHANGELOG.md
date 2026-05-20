@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 (2026-05-20)
+
+### 수정 (critical) — 환경 무관 동작
+- **슬래시 커맨드 12개 본문** 의 `jinhak-harness <cmd>` 호출을 `npx -y jinhak-harness <cmd>` 로 변경. 이유: Claude Code/Cursor 등이 슬래시를 실행할 때 사용하는 bash(WSL/git bash)와 사용자가 `npm install -g` 한 shell이 다르면 PATH 불일치로 "command not found" 발생. `npx`는 Node와 함께 깔리니 환경 무관 동작 + 글로벌 설치돼 있으면 자동 재사용 (다운로드 X).
+- 영향: Windows에서 `%APPDATA%\\npm` 이 PATH에 없는 환경, WSL Claude Code 가 git bash와 다른 환경을 쓰는 케이스, mac에서 nvm 으로 격리된 환경 등 모든 PATH 시나리오에서 슬래시 커맨드가 동작.
+- 파생 `.cursor/commands/*.md` + `.gemini/commands/*.toml` 도 `scripts/gen-commands.mjs` 로 재생성 (36개 invocation).
+
 ## 0.1.2 (2026-05-20)
 
 ### 수정 (critical)

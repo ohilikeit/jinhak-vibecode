@@ -10,13 +10,13 @@ Node.js, Python, pdfplumber/openpyxl/pandas, HARNESS_HOME, 프로필, 스킬 카
 인자가 없을 때:
 
 ```bash
-jinhak-harness doctor
+npx -y jinhak-harness doctor
 ```
 
 `--refresh` 가 포함된 경우 의존성 캐시(env-cache.json)를 무시하고 재측정합니다:
 
 ```bash
-jinhak-harness doctor --refresh
+npx -y jinhak-harness doctor --refresh
 ```
 
 `$ARGUMENTS` 가 `--refresh` 를 포함하는지 확인하고 그에 맞게 호출하세요.

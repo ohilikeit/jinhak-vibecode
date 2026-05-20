@@ -7,25 +7,25 @@
 미리 보기 (실제로 안 옮김):
 
 ```bash
-jinhak-harness handoff --to ~/Documents/share/jobs
+npx -y jinhak-harness handoff --to ~/Documents/share/jobs
 ```
 
 실제 복사:
 
 ```bash
-jinhak-harness handoff --to ~/Documents/share/jobs --confirm
+npx -y jinhak-harness handoff --to ~/Documents/share/jobs --confirm
 ```
 
 라벨로 logs/handoffs/*.log 에 기록(감사 추적):
 
 ```bash
-jinhak-harness handoff --to ~/Documents/share/jobs --label "주간 채용공고" --confirm
+npx -y jinhak-harness handoff --to ~/Documents/share/jobs --label "주간 채용공고" --confirm
 ```
 
 `$ARGUMENTS` 를 그대로 전달:
 
 ```bash
-jinhak-harness handoff $ARGUMENTS
+npx -y jinhak-harness handoff $ARGUMENTS
 ```
 
 `--to` 가 빠지면 사용법(exit 2). 사용자에게 "어디로 복사할까요?" 라고 물어 인자를 받으세요.

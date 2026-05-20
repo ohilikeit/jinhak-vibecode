@@ -10,25 +10,25 @@ CLI를 설치한 후, AI 도구 채팅창에서 `/jinhak:init` `/jinhak:build` �
 전체 호스트:
 
 ```bash
-jinhak-harness register
+npx -y jinhak-harness register
 ```
 
 미리 보기만:
 
 ```bash
-jinhak-harness register --dry-run
+npx -y jinhak-harness register --dry-run
 ```
 
 특정 호스트만:
 
 ```bash
-jinhak-harness register --host=claude,cursor
+npx -y jinhak-harness register --host=claude,cursor
 ```
 
 `$ARGUMENTS` 그대로 전달:
 
 ```bash
-jinhak-harness register $ARGUMENTS
+npx -y jinhak-harness register $ARGUMENTS
 ```
 
 ## 등록 위치 (호스트별)
@@ -49,7 +49,7 @@ jinhak-harness register $ARGUMENTS
 ## 제거
 
 ```bash
-jinhak-harness unregister
+npx -y jinhak-harness unregister
 ```
 
 """
