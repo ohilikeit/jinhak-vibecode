@@ -156,7 +156,7 @@ npm package: jinhak-harness (v0.1.3)
 ### v0.2 (타겟: 2026-07)
 
 🔄 **진행 중 / 계획**:
-- Layer 1: Azure DevOps Wiki sync MVP (`context sync` 명령)
+- Layer 1: SharePoint + Graph sync MVP (`context sync` 명령, 위임 인증)
 - Layer 2: 응답 포맷 hook 구현
 - Layer 2-3: 인터뷰 질문 카탈로그 확대 (직군별)
 - 토큰 가드 라벨(🟢🟡🔴) 실측 데이터 수집
