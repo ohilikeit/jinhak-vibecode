@@ -47,63 +47,72 @@ npm 패키지(`jinhak-harness` 등)로 배포되어, **agentskill 공통 규격*
 
 ```
 npm package: jinhak-harness (v0.1.3)
-  ├─ bin/
-  │   ├─ init.js              # 초기화 (AD 로그인 등)
-  │   ├─ doctor.js            # 진단 (설치 상태 확인)
-  │   └─ ...
-  ├─ commands/                # 슬래시 커맨드 (.md + frontmatter)
-  │   ├─ autopilot.md         # 자동 모드
-  │   ├─ build.md             # 구축
-  │   ├─ plan.md              # 계획
-  │   ├─ verify.md            # 검증
-  │   └─ ... (8개 메타 커맨드)
-  ├─ hooks/                   # SessionStart / PreToolUse / Stop
-  │   └─ ...
-  ├─ templates/               # CONTEXT.md / AGENTS.md 양식
-  │   ├─ CONTEXT.md
-  │   └─ AGENTS.md
-  └─ skills/                  # agentskill 규격 skill 묶음
-      ├─ interview/
-      ├─ plan/
-      ├─ verify/
-      └─ ...
+  ├─ bin/                     # Node 런타임 (CLI 진입점 + 모듈)
+  │   ├─ install.js           # CLI 라우터 (서브커맨드 디스패치)
+  │   ├─ postinstall.js       # 설치 후 6 호스트 자동 등록
+  │   ├─ profile.js           # eco/standard/power 예산 (ADR-001)
+  │   ├─ skills-loader.js     # SKILL.md 3계층 로딩
+  │   ├─ doctor.js / init.js / register.js  # 진단·초기화·등록
+  │   ├─ memory.js · user-profiler.js · lazy-deps.js · cost-label.js · friendly-error.js
+  │   └─ commands/            # 커맨드 구현 (.ts → .mjs 빌드)
+  │       └─ autopilot · build · plan · verify · start · handoff · ship · create (.mjs)
+  ├─ commands/                # 슬래시 커맨드 정의 (.md + frontmatter) — 실재 12개
+  │   ├─ start.md build.md verify.md plan.md autopilot.md handoff.md ship.md
+  │   └─ create.md doctor.md init.md register.md unregister.md
+  ├─ hooks/
+  │   └─ session-start        # SessionStart: baseline(alwaysApply) 주입
+  └─ templates/
+      ├─ .agents/skills/      # 빌트인 직군 스킬 (agentskill 규격)
+      │   ├─ baseline/                  # 모든 자동화 위에 깔리는 정책층
+      │   ├─ jobs-pdf-to-excel/         # 채용공고 PDF → Excel
+      │   ├─ expense-pdf-to-csv/        # 영수증 PDF → CSV
+      │   └─ meeting-notes-to-summary/  # 회의록 → 요약표
+      └─ common/utils/        # 공용 유틸 (requires:로 호출)
+          └─ pdf-extract/ · xlsx-write/ · csv-write/   # Python lazy 디텍션
 ```
 
 ### 설치 후 동작
 
-1. **~/.claude/CLAUDE.md 자동 수정** (사용자 동의 후)
-   ```
-   @import jinhak/division.md
-   @import jinhak/team.md
-   ```
+1. **6 호스트 자동 등록** (`JINHAK_AUTO_REGISTER=1` 시 postinstall)
+   - Claude Code / Cursor / Codex / Gemini / Antigravity / OpenCode의 user-level commands 디렉터리에
+     `/jinhak:*` 슬래시 커맨드 일괄 등록
 
-2. **Hook 등록**
-   - SessionStart: Layer 1 context 로드
-   - PreToolUse: Layer 2 데이터 접근 안내
-   - Stop: 응답 포맷 강제
+2. **SessionStart hook**
+   - `hooks/session-start`: `baseline`(alwaysApply) 스킬을 세션 부팅 시 주입
 
-3. **다른 vibe-coding 도구에서도 동작**
-   - Cursor / Gemini / Antigravity는 `AGENTS.md` 규격 스캔
-   - 동일 기능 자동 로드
+> **미구현 (v0.2 타겟)**: `~/.claude/CLAUDE.md` 자동 `@import` 주입(Layer 1 context),
+> PreToolUse(Layer 2 데이터 안내) / Stop(응답 포맷 강제) hook은 아직 없다. 현재 hook은 `session-start` 하나뿐.
 
 ---
 
-## 4. 현 포함 커맨드 (8종)
+## 4. 현 포함 커맨드 (실재 12종)
 
-| 이름 | 역할 | 비개발자 노출 |
+`commands/*.md`에 실제로 존재하는 슬래시 커맨드. (orchestration-spec의 "메타 커맨드 8종"은 **원안**이며,
+구현은 아래와 같이 달라졌다 — `/onboard`→`/start` 개명, `/autoplan` 미구현, `/ship`·`/handoff` 의미 변경,
+설치·등록용 `create/doctor/init/register/unregister` 추가.)
+
+### 자동화 워크플로 (7종)
+| 이름 | 실제 동작 | 비개발자 노출 |
 |---|---|---|
-| `/jinhak:autopilot` | 자동 모드 (분해 → 구축 → 검증 자동화) | ✅ 노출 (v0.1) |
-| `/jinhak:start` | 사용자 프로파일링 + 인터뷰 모드 시작 | ✅ 노출 (v0.1) |
-| `/jinhak:build` | 구체적 결과물 생성 | ✅ 노출 (v0.1) |
-| `/jinhak:verify` | 결과물을 팩트와 대조 검증 | ✅ 노출 (v0.1) |
-| `/jinhak:plan` | 자동화 계획 수립 (분해) | ❌ 내부 (v0.2) |
-| `/jinhak:interview` | 비개발자 친화 인터뷰 (Layer 2-3) | ❌ 내부 (v0.2) |
-| `/jinhak:handoff` | 단계 전환 시 결정·리스크 기록 | ❌ 내부 (v0.2) |
-| `/jinhak:status` | "어디까지/뭐 남고/다음" 포맷 강제 | ❌ 내부 (v0.2) |
+| `/jinhak:start` | 5문항 직군 인터뷰 → 8 행동 차원 추론 → `~/.harness/user-profile.md` (1회) | ✅ |
+| `/jinhak:autopilot` | `plan → build → verify` 순차 체인 | ✅ |
+| `/jinhak:build` | 룰테이블로 적합 스킬 선택 → `inbox/*` → `output/*` 생성 | ✅ |
+| `/jinhak:verify` | 직전 산출물 친절 한국어 검증 (행 수·빈 셀·합계) | ✅ |
+| `/jinhak:plan` | 요청 분석 + 호출될 스킬 미리보기 → `.harness/plans/<ts>-<slug>.md` 저장 | 내부 |
+| `/jinhak:handoff` | 산출물을 다른 폴더로 **복사** (dry-run 기본, `--confirm` 시 실제) | 내부 |
+| `/jinhak:ship` | `.harness/*` 변경분을 git 커밋 (작업 로그 보존) | 내부 |
 
-**현 노출 전략**: v0.1.3은 **3개만 비개발자에게 노출** (`/jinhak:autopilot /jinhak:start /jinhak:build /jinhak:verify`). 나머지 5개는 내부 호출용.
+### 설치·운영 (5종)
+| 이름 | 실제 동작 |
+|---|---|
+| `/jinhak:create` | 6문항 인터뷰 → `user-skills/<name>/SKILL.md` 생성 (Skill Creator) |
+| `/jinhak:doctor` | 환경·의존성·프로필·스킬·메모리 6섹션 한국어 진단 |
+| `/jinhak:init` | `$HARNESS_HOME` 홈 디렉터리 초기화 (첫 설치 후 1회) |
+| `/jinhak:register` / `unregister` | 6 호스트에 슬래시 커맨드 등록/제거 |
 
-자세한 내용은 [orchestration-spec.md](../orchestration-spec.md) 참조.
+> **주의**: `orchestration-spec`이 정의한 `/autoplan`, `.harness/plans/<slug>/{CONTEXT,PLAN,SUMMARY,VERIFICATION}.md`
+> 4파일 상태머신, CommandDef 레지스트리, HARD-GATE 카탈로그는 **미구현 원안**이다.
+> 실제 `/plan`은 slug별 폴더가 아닌 단일 `.md` 한 장을 쓴다. 상세는 [orchestration-spec.md](../orchestration-spec.md) §0 참조.
 
 ---
 
@@ -149,7 +158,7 @@ npm package: jinhak-harness (v0.1.3)
 ✅ **완료**:
 - npm 패키지 (v0.1.3)
 - 6 호스트 자동 등록
-- 8개 메타 커맨드 (3개 비개발자 노출 + 5개 내부)
+- 실재 12개 슬래시 커맨드 (자동화 7 + 설치·운영 5; 비개발자 노출 4)
 - 인터뷰 모드 (`/jinhak:start`)
 - 호스트별 인증 채널
 

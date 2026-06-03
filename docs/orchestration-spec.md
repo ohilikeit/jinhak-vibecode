@@ -1,8 +1,11 @@
-# Orchestration Spec — 메타 슬래시 커맨드 8종
+# Orchestration Spec — 메타 슬래시 커맨드 (원안)
 
-> **상태**: Draft v2 (2026-05-18, Codex 리뷰 반영)
-> **상위 문서**: [README.md §4.5](../README.md) · [REPORT_06 §5.5](../REPORT_06_FINAL_synthesis.md)
+> **상태**: ⚠️ **원안 / 부분 구현** (Draft v2, 2026-05-18 작성 후 미수정).
+> 아래 본문은 **설계 의도(원안)**이며 실제 구현은 단순화되어 달라졌다. **현재 구현 기준은 [§0.5 구현 현황](#05-구현-현황-2026-06-기준)을 먼저 보라.**
+> 본문 §1~9는 v1.0을 향한 **로드맵/설계 참조**로 유지한다.
+> **상위 문서**: [README.md §4.5](../README.md) · [REPORT_06 §5.5](research/REPORT_06_FINAL_synthesis.md)
 > **차용 출처**: GSD · Superpowers · Hermes · KW Plugins · Karpathy
+> **현 구현 도구 문서**: [architecture/LAYER3_HARNESS_TOOLING.md](architecture/LAYER3_HARNESS_TOOLING.md)
 
 ## 0. v2 핵심 변경 (Codex 리뷰 결과 반영)
 
@@ -21,7 +24,49 @@
 
 ---
 
-## 1. 디렉터리 레이아웃 (GSD 차용)
+## 0.5 구현 현황 (2026-06 기준)
+
+> **이 절이 현재 동작에 대한 권위 있는 기준이다.** §1~9는 작성 시점의 원안이며 구현과 다르다.
+
+### 커맨드: 원안 8종 → 실재 12종
+
+| 원안 (§4) | 실제 | 차이 |
+|---|---|---|
+| `/onboard` | `/start` | **개명**. 5문항 인터뷰 → `~/.harness/user-profile.md` |
+| `/plan` | `/plan` | 존재. 단 산출물이 다름(아래) |
+| `/autoplan` | — | ❌ **미구현** (파일 없음) |
+| `/build` | `/build` | 존재. 단 PLAN 실행 엔진이 아니라 `inbox→output` 룰테이블 디스패처 |
+| `/autopilot` | `/autopilot` | 존재. `plan→build→verify` 순차 spawn (phase 게이트 없음) |
+| `/verify` | `/verify` | 존재. 친절 한국어 검증(행 수·빈 셀·합계). evals/압박테스트 미구현 |
+| `/ship` | `/ship` | **의미 변경**: 스케줄·전달채널 등록 → `.harness/*` **git 커밋** |
+| `/handoff` | `/handoff` | **의미 변경**: 직군 컨텍스트 전환 → 산출물 **폴더 복사**(dry-run 기본, `--confirm`) |
+| (없음) | `/create` | Skill Creator 6문항 인터뷰 → `user-skills/<name>/SKILL.md` |
+| (없음) | `/doctor` `/init` `/register` `/unregister` | 진단·홈 초기화·6 호스트 등록/제거 |
+
+### 아티팩트: 원안 상태머신 → 실재 단순 파일
+
+| 원안 (§1) | 실제 |
+|---|---|
+| `.harness/plans/<slug>/{CONTEXT,PLAN,SUMMARY,VERIFICATION}.md` (slug별 4파일) | `.harness/plans/<타임스탬프>-<slug>.md` **단일 파일** 1장 |
+| `.harness/baseline.mdc` `PROJECT.md` `ROADMAP.md` `handoffs/<phase>.md` `evals/<skill>/evals.json` | ❌ 미생성 |
+| `.harness/state.md` | ✅ `/handoff`·`/ship`이 사용 |
+| `user-profile.md` (프로젝트) | `~/.harness/user-profile.md` (홈) |
+
+### 미구현 시스템 (원안에만 존재)
+
+- **CommandDef 중앙 레지스트리(§2)** — `registry.ts` 없음. 커맨드는 `commands/*.md` + `bin/commands/*.mjs`로 개별 정의.
+- **HARD-GATE 카탈로그(§3,§5)** — `/handoff`의 dry-run을 제외하면 형식 게이트 미구현.
+- **직군 스킬 phase 매핑·서브에이전트 spawn(§3.3,§6)** — `/build`는 3개 구체 스킬(jobs-pdf-to-excel / expense-pdf-to-csv / meeting-notes-to-summary)에 대한 정적 룰테이블.
+- **메모리 훅(on_session_end / on_session_switch)** — facade(`bin/memory.js`)만 존재, 훅 연동 미구현.
+- **Description Tuner 학습 루프(§7)** — 미구현.
+
+### 실재 빌트인 스킬
+- 직군: `baseline`, `jobs-pdf-to-excel`, `expense-pdf-to-csv`, `meeting-notes-to-summary` (`templates/.agents/skills/`)
+- 공용 유틸: `pdf-extract`, `xlsx-write`, `csv-write` (`templates/common/utils/`, Python lazy 디텍션)
+
+---
+
+## 1. 디렉터리 레이아웃 (GSD 차용) — 원안
 
 ```
 .harness/
@@ -93,7 +138,7 @@ interface CommandDef {
 
 ---
 
-## 4. 8개 커맨드 상세 스펙
+## 4. 8개 커맨드 상세 스펙 — 원안 (실재 매핑은 §0.5)
 
 ### 4.1 `/onboard`
 ```yaml
