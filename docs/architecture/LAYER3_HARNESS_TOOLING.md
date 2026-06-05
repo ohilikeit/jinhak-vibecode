@@ -1,11 +1,6 @@
-# Layer 3: 업무 프로세스화 도구 — 현재 jinhak-vibecode 레포
+# 업무 프로세스화 플러그인
 
-> **상태**: 현 구현 + 로드맵 (v0.1.3 → v0.2 → v1.0)
-> **연관 문서**: [VISION.md](./VISION.md) · [Layer 1](./LAYER1_CONTEXT_INFRA.md) · [Layer 2](./LAYER2_DATA_ACCESS.md)
-
----
-
-## 1. 정체성
+## 1. 목적
 
 **현재 이 레포(`jinhak-vibecode`)가 Layer 3의 실체.**
 
@@ -26,9 +21,11 @@ npm 패키지(`jinhak-harness` 등)로 배포되어, **agentskill 공통 규격*
 
 - 사내 npm registry (Azure Artifacts) 또는 public npm + AD 인증 wrapper
 - 사용자는 한 줄 설치:
-  ```bash
-  JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
-  ```
+    
+    ```bash
+    JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
+    ```
+    
 - postinstall이 6 호스트 CLI 자동 등록
 
 ### 2-3. 자율성 보장
@@ -201,23 +198,13 @@ npm package: jinhak-harness (v0.1.3)
 
 다음 항목들이 확정되어야 v0.2+ 구현 가능:
 
-- [ ] **사내 npm registry 운영 가능 여부** — Azure Artifacts 사용? public npm + 인증 wrapper?
-- [ ] **AD 인증 wrapper 필요성** — npm 설치 시 AD 로그인 자동 검증?
-- [ ] **호스트별 인증 채널 실사** — Claude Code / Cursor / Codex / Gemini / Antigravity / OpenCode 각각의 회사 라이선스 상태
-- [ ] **토큰 가드 라벨(🟢🟡🔴) 실측 데이터** — v0.1 측정 후 v0.2 조정 기준 (예: 🟢 = 0~1K 토큰)
-- [ ] **eval 데이터셋 사내 수집 동의** — with/without 벤치마크 학습용 (보안팀 승인)
-- [ ] **사내 마켓플레이스 운영 책임자** — v1.0+ 마켓플레이스 비전 (skill 공유, 평가)
-- [ ] **`dev-home/` 격리 모델의 다른 호스트 적용 검증** — 현재 Claude Code 위주, 다른 도구는?
-- [ ] **기여 워크플로 (누가 PR 권한?)** — Bitbucket? GitHub? 내부 승인 프로세스?
+- [ ]  **사내 npm registry 운영 가능 여부** — Azure Artifacts 사용? public npm + 인증 wrapper?
+- [ ]  **AD 인증 wrapper 필요성** — npm 설치 시 AD 로그인 자동 검증?
+- [ ]  **호스트별 인증 채널 실사** — Claude Code / Cursor / Codex / Gemini / Antigravity / OpenCode 각각의 회사 라이선스 상태
+- [ ]  **토큰 가드 라벨(🟢🟡🔴) 실측 데이터** — v0.1 측정 후 v0.2 조정 기준 (예: 🟢 = 0~1K 토큰)
+- [ ]  **eval 데이터셋 사내 수집 동의** — with/without 벤치마크 학습용 (보안팀 승인)
+- [ ]  **사내 마켓플레이스 운영 책임자** — v1.0+ 마켓플레이스 비전 (skill 공유, 평가)
+- [ ]  **`dev-home/` 격리 모델의 다른 호스트 적용 검증** — 현재 Claude Code 위주, 다른 도구는?
+- [ ]  **기여 워크플로 (누가 PR 권한?)** — Bitbucket? GitHub? 내부 승인 프로세스?
 
 ---
-
-## 관련 문서
-
-- [VISION.md](./VISION.md) — 3-Layer 아키텍처 전체 개요
-- [LAYER1_CONTEXT_INFRA.md](./LAYER1_CONTEXT_INFRA.md) — 기본 context 레이어
-- [LAYER2_DATA_ACCESS.md](./LAYER2_DATA_ACCESS.md) — 데이터 접근성 설계
-- [../../README.md](../../README.md) — 패키지 소개 & 설계 배경
-- [../../USAGE.md](../../USAGE.md) — 사용 설명서
-- [../orchestration-spec.md](../orchestration-spec.md) — 메타 커맨드 spec
-- [../adr/](../adr/) — 아키텍처 결정 기록

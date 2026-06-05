@@ -5,17 +5,17 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { harnessHome, agentsSkillsHome, isDevMode } = require('../paths.js');
+const { harnessHome, isDevMode } = require('../paths.js');
 
 function main() {
   const home = harnessHome();
-  const skillsHome = agentsSkillsHome();
 
+  // 빌트인 자동화는 패키지에 내장되어 build 가 키워드로 직접 실행한다.
+  // 사용자 홈으로 스킬을 배포(복사)하지 않으므로 ~/.harness 하위만 만든다.
   const dirs = [
     home,
     path.join(home, 'user-skills'),
     path.join(home, 'memory', 'projects'),
-    skillsHome,
   ];
 
   const lines = [

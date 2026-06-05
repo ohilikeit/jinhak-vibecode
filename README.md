@@ -55,8 +55,10 @@ jinhak-harness --version       # → jinhak-harness v0.1.3
 
 - 대상: 기획, 디자인, 마케팅, 영업, HR, 재무 등 비개발 직군 전반
 - 호환성: Claude Code / Cursor / Antigravity / Codex / Copilot 등 멀티 AI 도구 환경
-- 출력: **공식 Agent Skills 표준을 따르는 `.agents/skills/<skill-name>/SKILL.md` 번들** (다수의 AI 도구가 이미 이 경로를 1차로 스캔)
-- 표준 참조: [Agent Skills Specification](https://agentskills.io/specification)
+- 출력: 작업 폴더의 `output/*` 산출물(Excel/CSV/Markdown). 빌트인 자동화 로직은 패키지에 내장되어 `build` 가 키워드로 실행한다.
+- 표준 참조: [Agent Skills Specification](https://agentskills.io/specification) — 향후 호환 목표(현재 v0.1.3은 SKILL.md 번들을 사용자 홈으로 배포하지 않음)
+
+> 🚧 **배포 모델 메모**: 초기 설계는 `.agents/skills/<name>/SKILL.md` 번들을 `~/.agents/skills/` 로 배포해 호스트 도구가 스캔하게 하는 그림이었으나, **이 배포는 보류**되었다. 현재 호스트 통합은 오직 `jinhak-harness register` 가 복사하는 **12개 `/jinhak:*` 슬래시 커맨드**로만 이뤄진다. 아래 §2-D, §B 의 배포·스캔 서술은 로드맵으로 읽을 것.
 
 ## 2. 기능 카테고리
 
