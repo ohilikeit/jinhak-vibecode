@@ -7,7 +7,7 @@
 
 ## ⚡ 30초 설치
 
-npm에 publish 되어 있습니다 (현재 안정 최신: **v0.1.4 / `@beta` 태그**). Git Bash(Windows)나 macOS/Linux 터미널에서 **한 줄**:
+npm에 publish 되어 있습니다 (현재 안정 최신: **v0.1.5 / `@beta` 태그**). Git Bash(Windows)나 macOS/Linux 터미널에서 **한 줄**:
 
 ```bash
 JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
@@ -22,7 +22,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 설치 확인:
 ```bash
-jinhak-harness --version       # → jinhak-harness v0.1.4
+jinhak-harness --version       # → jinhak-harness v0.1.5
 ```
 
 그 다음 AI 도구를 **완전히 종료-재실행** 하고 채팅창에서:

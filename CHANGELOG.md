@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.5 (2026-06-15)
+
+### 신규 — session-start 훅 크로스플랫폼화 (bash 없는 Windows 자동 주입)
+- **문제**: 기존 `hooks/session-start`는 bash 전용(`read -d`·`${s//…}`·`awk`)이라 Git Bash/WSL 없는 **순수 Windows(cmd/PowerShell)에서 자동 주입이 조용히 동작 안 함** — 0.1.4에서 넣은 개인 컨텍스트 주입이 딱 이 지점에서 취약.
+- **해결 — 단일 Node 두뇌 + 얇은 래퍼**:
+  - `hooks/session-start.js`: 크로스플랫폼 Node 엔진. 부트스트랩 + baseline 합성 + 개인 컨텍스트(인터뷰모드) 다이제스트를 호스트별 JSON 스키마(Cursor/Claude/Copilot·SDK)로 출력. 이스케이프는 `JSON.stringify`로 안전 처리.
+  - `hooks/session-start.ps1`: PowerShell 폴백 — 동일 Node 엔진을 호출. bash 없는 Windows에서도 자동 주입 동작.
+  - `hooks/session-start`(bash): node 있으면 엔진으로 `exec` 위임, 없으면 기존 인라인 bash 폴백 유지(*nix 안전망).
+- 로직이 한 곳(Node)으로 일원화 — bash/PowerShell/macOS/Linux/WSL 모두 동일 출력.
+- 테스트: `tests/hooks/test-session-start-node.sh`(9) 추가. 기존 `test-session-start.sh`(11)는 위임 경로로 전부 통과.
+
+> Windows 순수 환경 배포 시: 호스트 훅을 `powershell -File hooks/session-start.ps1` 또는 `node hooks/session-start.js`로 지정. WSL/Git Bash 환경은 변경 불필요.
+
 ## 0.1.4 (2026-06-15)
 
 ### 신규 — 인터뷰모드 개인 컨텍스트 (full 모드 자동 주입)

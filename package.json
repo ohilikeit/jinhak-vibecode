@@ -1,6 +1,6 @@
 {
   "name": "jinhak-harness",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "비개발자 직군 자동화 하니스 — 한국어 우선, 토큰 가드 eco 기본, Claude Code/Cursor/Codex/Gemini/Antigravity/OpenCode 모두 호환",
   "keywords": [
     "agent",

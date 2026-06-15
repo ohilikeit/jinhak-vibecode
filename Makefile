@@ -48,6 +48,7 @@ export JINHAK_PYTHON
 
 test-hooks:
 	@./tests/hooks/test-session-start.sh
+	@./tests/hooks/test-session-start-node.sh
 	@./tests/manifests/test-manifests.sh
 
 test-bin:
