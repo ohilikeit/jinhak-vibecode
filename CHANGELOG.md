@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.4 (2026-06-15)
+
+### 신규 — 인터뷰모드 개인 컨텍스트 (full 모드 자동 주입)
+- **`/interview` 심화 인터뷰 커맨드**: 단군 하니스 온보딩 설문(Q-DG-01~20)을 직군 불문으로 일반화. CORE 7문항(우선순위·상시관심사·선제알림·어조·반론방식·기본언어·금지주제) + `--exec` 임원/경영진 질문팩 4문항(언론키워드·경쟁사동향·일일요약/주간성찰 시간). 답변은 `~/.harness/personal-context.md`에 구조화 저장.
+- **세션 자동 주입 (핵심 빈틈 해소)**: 기존 `session-start` 훅은 `/start`가 만든 프로필을 **한 번도 주입하지 않았음**. 이제 `bin/render-digest.js`가 매 세션 프로필을 읽어 부트스트랩에 합성한다.
+  - **full 모드**: `personal-context.md`(심화 인터뷰)가 있으면 **전체 개인 컨텍스트**를 주입 — context가 항상 잘 동작.
+  - **eco 폴백**: 심화 인터뷰 없이 `/start` 프로필만 있으면 압축 다이제스트만 (≤700자). `HARNESS_CONTEXT_MODE=eco`로 full 모드 강제 비활성 가능.
+- 신규 파일: `bin/personal-context.js`, `bin/render-digest.js`, `bin/commands/interview.js`, `commands/interview.md`.
+- 테스트: `tests/bin/test-render-digest.sh`(12), `tests/commands/test-interview.sh`(11), `test-session-start.sh`에 full 모드 주입 케이스 추가.
+
 ## 0.1.3 (2026-05-20)
 
 ### 수정 (critical) — 환경 무관 동작

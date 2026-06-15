@@ -57,9 +57,11 @@ test-bin:
 	@./tests/bin/test-skill-flags.sh
 	@./tests/bin/test-user-profiler.sh
 	@./tests/bin/test-memory.sh
+	@./tests/bin/test-render-digest.sh
 
 test-commands:
 	@./tests/commands/test-start.sh
+	@./tests/commands/test-interview.sh
 	@./tests/commands/test-verify.sh
 	@./tests/commands/test-handoff.sh
 	@./tests/commands/test-plan.sh

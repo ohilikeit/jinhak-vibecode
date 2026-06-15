@@ -56,14 +56,37 @@ else
   note "python3 없음 — JSON 파싱 검증 스킵"
 fi
 
-# 5) 부트스트랩 컨텍스트 ≤ 500 토큰 (chars/4 근사)
-ctx_chars=$(bash "$HOOK" | python3 -c 'import sys,json; print(len(json.load(sys.stdin)["additionalContext"]))')
+# 5) 부트스트랩 컨텍스트 ≤ 500 토큰 (chars/4 근사) — 개인 컨텍스트 없는 기본값 기준
+#    격리된 빈 HARNESS_HOME으로 결정론적 측정 (dev 머신의 실제 프로필 영향 배제)
+EMPTY_HOME=$(mktemp -d)
+ctx_chars=$(HARNESS_HOME="$EMPTY_HOME" bash "$HOOK" | python3 -c 'import sys,json; print(len(json.load(sys.stdin)["additionalContext"]))')
+rm -rf "$EMPTY_HOME"
 ctx_tokens=$((ctx_chars / 4))
 if [ "$ctx_tokens" -le 500 ]; then
   ok "부트스트랩 컨텍스트 ${ctx_chars}자 ≈ ${ctx_tokens}토큰 (≤500)"
 else
   ng "컨텍스트가 500토큰 초과: ${ctx_chars}자 ≈ ${ctx_tokens}토큰"
 fi
+
+# 5a) 개인 컨텍스트(인터뷰모드) full 모드 주입 — personal-context.md 있으면 전체 주입
+PCTX_HOME=$(mktemp -d)
+cat > "$PCTX_HOME/personal-context.md" <<'PCEOF'
+---
+mode: full
+priorities:
+  - 'CATCH MAU 700만 달성'
+tone: '직접적'
+suppressed_topics:
+  - '인사 관련 사항'
+---
+# 개인 컨텍스트
+PCEOF
+out_pctx=$(HARNESS_HOME="$PCTX_HOME" bash "$HOOK")
+rm -rf "$PCTX_HOME"
+case "$out_pctx" in
+  *'개인 컨텍스트 (인터뷰모드)'*'CATCH MAU 700만 달성'*) ok "full 모드 개인 컨텍스트 주입" ;;
+  *) ng "개인 컨텍스트 미주입" ;;
+esac
 
 # 5b) alwaysApply: true baseline 본문이 동적으로 합성되는가
 out=$(bash "$HOOK")

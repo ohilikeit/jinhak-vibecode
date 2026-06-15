@@ -22,6 +22,7 @@ const DETAILS = {
 // 커맨드별 기본 비용 매트릭스
 const COMMAND_COST = {
   start:   'fast',
+  interview: 'fast', // 결정론적 인터뷰 — LLM 호출 없음 (주입만 full 모드)
   plan:    'fast',
   verify:  'fast',
   handoff: 'fast',

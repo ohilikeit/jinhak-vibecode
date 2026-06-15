@@ -7,7 +7,7 @@
 
 ## ⚡ 30초 설치
 
-npm에 publish 되어 있습니다 (현재 안정 최신: **v0.1.3 / `@beta` 태그**). Git Bash(Windows)나 macOS/Linux 터미널에서 **한 줄**:
+npm에 publish 되어 있습니다 (현재 안정 최신: **v0.1.4 / `@beta` 태그**). Git Bash(Windows)나 macOS/Linux 터미널에서 **한 줄**:
 
 ```bash
 JINHAK_AUTO_REGISTER=1 npm install -g jinhak-harness@beta
@@ -22,7 +22,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 설치 확인:
 ```bash
-jinhak-harness --version       # → jinhak-harness v0.1.3
+jinhak-harness --version       # → jinhak-harness v0.1.4
 ```
 
 그 다음 AI 도구를 **완전히 종료-재실행** 하고 채팅창에서:
@@ -284,6 +284,7 @@ npx jinhak-harness@latest --profile=power    # 모든 자동 검증 ON
 | 커맨드 | 사용자가 하는 일 | 내부에서 자동 실행 |
 |---|---|---|
 | **`/start`** | 최초 1회 — 직군·작업 영역 답하기 | onboarding + baseline 작성 + starter 스킬 설치 |
+| **`/interview`** | 최초 1회(선택) — 우선순위·어조·금지주제 심화 답하기 (`--exec` 임원팩) | 개인 컨텍스트 작성 + 매 세션 full 모드 자동 주입 |
 | **`/build <한 줄 목표>`** | 자동화 만들고 싶다 말하기 | plan → autoplan(메모리) → build (단계 자동 진행, 단계 사이 가벼운 확인만) |
 | **`/verify`** | "결과 맞아?" 확인 + 게시 결정 | verify(Dry-run) → 사용자 OK 시 ship(스케줄·전달 채널) |
 

@@ -37,6 +37,7 @@ function printHelp() {
       '  init                            홈 디렉터리 초기화 (첫 실행 시)',
       '  doctor                          환경/의존성/스킬 진단',
       '  start                           5문항 직군 인터뷰 + 프로필 생성',
+      '  interview [--exec] [--force]    심화 인터뷰 → 개인 컨텍스트(full 모드 자동 주입)',
       '  plan "<요청>"                   요청 분석 → .harness/plans/*.md',
       '  build "<요청>"                  실제 실행 (PDF→Excel / 회의록→md 등)',
       '  verify [--expected-rows N]      산출물 친절 한국어 리포트',
@@ -122,6 +123,16 @@ switch (cmd) {
     printPaths();
     process.exit(0);
     break;
+  case 'interview': {
+    const script = path.resolve(__dirname, 'commands', 'interview.js');
+    const result = spawnSync(
+      process.execPath,
+      [script, ...args.slice(1)],
+      { stdio: 'inherit' },
+    );
+    process.exit(result.status ?? 1);
+    break;
+  }
   case 'start': {
     // start.ts를 type-stripping 모드로 child process에서 실행
     const script = path.resolve(__dirname, 'commands', 'start.mjs');
